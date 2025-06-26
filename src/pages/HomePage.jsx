@@ -1,91 +1,363 @@
 import React from 'react';
-import { ShoppingCart, Truck, Wrench } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  Stack,
+  Chip,
+  Avatar,
+  Paper,
+  useTheme,
+} from '@mui/material';
+import {
+  ShoppingCart,
+  LocalShipping,
+  Build,
+  Star,
+  CheckCircle,
+  Phone,
+  ArrowForward,
+  Speed,
+  Security,
+  Support,
+  LocationOn,
+} from '@mui/icons-material';
 import { useApp } from '../context/AppContext';
 
 const HomePage = () => {
+  const theme = useTheme();
   const { navigateTo } = useApp();
-  
+
+  const services = [
+    {
+      icon: <ShoppingCart />,
+      title: 'Sales',
+      description: 'New and refurbished forklifts with competitive pricing and financing options available.',
+      color: 'primary',
+      action: () => navigateTo('shop'),
+      actionText: 'Browse Products'
+    },
+    {
+      icon: <LocalShipping />,
+      title: 'Plant Hire',
+      description: 'Emergency breakdown service with immediate replacement forklifts to keep your operations running.',
+      color: 'secondary',
+      action: () => navigateTo('contact'),
+      actionText: 'Hire Enquiry'
+    },
+    {
+      icon: <Build />,
+      title: 'Service & Repair',
+      description: 'Professional maintenance and repair services with low loader delivery and collection.',
+      color: 'warning',
+      action: () => navigateTo('contact'),
+      actionText: 'Service Enquiry'
+    }
+  ];
+
+  const features = [
+    { icon: <Speed />, text: '25+ Years Experience' },
+    { icon: <Security />, text: '500+ Happy Customers' },
+    { icon: <Support />, text: '24/7 Support Available' },
+    { icon: <LocationOn />, text: 'All Ireland Coverage' },
+  ];
+
   return (
-    <div>
+    <Box>
       {/* Hero Section */}
-      <section className="relative bg-blue-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Forklift hire from €80 per week
-            </h1>
-            <p className="text-xl mb-8 max-w-3xl mx-auto">
-              We are specialists in the supply and hire of new and refurbished forklifts for industry and small independent trader
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigateTo('shop')} className="bg-white text-blue-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'white',
+          py: 12,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Background Elements */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: -50,
+            right: -50,
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.1)',
+            filter: 'blur(60px)',
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: -100,
+            left: -100,
+            width: 300,
+            height: 300,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.05)',
+            filter: 'blur(80px)',
+          }}
+        />
+
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Box textAlign="center">
+            <Chip
+              icon={<Star />}
+              label="Ireland's #1 Forklift Specialists"
+              sx={{
+                bgcolor: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                mb: 4,
+                backdropFilter: 'blur(10px)',
+              }}
+            />
+
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
+                fontWeight: 'bold',
+                mb: 3,
+                lineHeight: 1.1,
+              }}
+            >
+              Forklift hire from{' '}
+              <Box component="span" sx={{ color: 'warning.main' }}>
+                €80
+              </Box>{' '}
+              per week
+            </Typography>
+
+            <Typography
+              variant="h5"
+              sx={{
+                mb: 6,
+                opacity: 0.9,
+                maxWidth: '800px',
+                mx: 'auto',
+                lineHeight: 1.4,
+              }}
+            >
+              We are specialists in the supply and hire of new and refurbished forklifts
+              for industry and small independent traders
+            </Typography>
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={3}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Button
+                onClick={() => navigateTo('shop')}
+                variant="contained"
+                size="large"
+                endIcon={<ArrowForward />}
+                sx={{
+                  bgcolor: 'white',
+                  color: 'primary.main',
+                  px: 4,
+                  py: 2,
+                  fontSize: '1.1rem',
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                    transform: 'translateY(-2px)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 View Products
-              </button>
-              <a href="tel:+35351293208" className="bg-blue-700 text-white px-8 py-3 rounded-md font-semibold hover:bg-blue-800 transition-colors">
+              </Button>
+
+              <Button
+                href="tel:+35351293208"
+                variant="contained"
+                color="secondary"
+                size="large"
+                startIcon={<Phone />}
+                sx={{
+                  px: 4,
+                  py: 2,
+                  fontSize: '1.1rem',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 Call Us Now
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+              </Button>
+            </Stack>
+          </Box>
+        </Container>
+      </Box>
 
-      {/* Services */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShoppingCart className="w-10 h-10 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Sales</h3>
-              <p className="text-gray-600 mb-4">
-                Do you need a Quote for repair of your existing machinery and supply of your future requirement
-              </p>
-              <button onClick={() => navigateTo('shop')} className="text-blue-600 hover:underline">
-                Browse Products →
-              </button>
-            </div>
+      {/* Trust Badges */}
+      <Box sx={{ py: 4, bgcolor: 'background.paper' }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={2} justifyContent="center">
+            {features.map((feature, index) => (
+              <Grid item xs={6} sm={3} key={index}>
+                <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                  <Avatar sx={{ bgcolor: 'success.main', width: 32, height: 32 }}>
+                    {React.cloneElement(feature.icon, { sx: { fontSize: 16 } })}
+                  </Avatar>
+                  <Typography variant="body2" sx={{ fontWeight: 'medium', color: 'text.secondary' }}>
+                    {feature.text}
+                  </Typography>
+                </Stack>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
-            <div className="text-center">
-              <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="w-10 h-10 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Plant Hire</h3>
-              <p className="text-gray-600 mb-4">
-                In the event of a breakdown of one of your forklifts we always have a replacement forklift in stock
-              </p>
-              <button onClick={() => navigateTo('contact')} className="text-blue-600 hover:underline">
-                Hire Enquiry →
-              </button>
-            </div>
+      {/* Services Section */}
+      <Box sx={{ py: 10, bgcolor: 'background.default' }}>
+        <Container maxWidth="lg">
+          <Box textAlign="center" sx={{ mb: 8 }}>
+            <Typography variant="h2" sx={{ mb: 2, fontWeight: 'bold' }}>
+              Our Services
+            </Typography>
+            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '600px', mx: 'auto' }}>
+              From emergency replacements to full fleet management, we've got your forklift needs covered
+            </Typography>
+          </Box>
 
-            <div className="text-center">
-              <div className="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wrench className="w-10 h-10 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Service</h3>
-              <p className="text-gray-600 mb-4">
-                Professional maintenance and repair services with a low loader to deliver / collect same
-              </p>
-              <button onClick={() => navigateTo('contact')} className="text-blue-600 hover:underline">
-                Service Enquiry →
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+          <Grid container spacing={4}>
+            {services.map((service, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: theme.shadows[12],
+                    },
+                    cursor: 'pointer',
+                  }}
+                  onClick={service.action}
+                >
+                  <CardContent sx={{ p: 4, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <Avatar
+                      sx={{
+                        bgcolor: `${service.color}.main`,
+                        width: 80,
+                        height: 80,
+                        mx: 'auto',
+                        mb: 3,
+                      }}
+                    >
+                      {React.cloneElement(service.icon, { sx: { fontSize: 40 } })}
+                    </Avatar>
+
+                    <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+                      {service.title}
+                    </Typography>
+
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      sx={{ mb: 4, lineHeight: 1.6, flexGrow: 1 }}
+                    >
+                      {service.description}
+                    </Typography>
+
+                    <Button
+                      onClick={service.action}
+                      variant="outlined"
+                      color={service.color}
+                      endIcon={<ArrowForward />}
+                      fullWidth
+                      sx={{ mt: 'auto' }}
+                    >
+                      {service.actionText}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
       {/* Call to Action */}
-      <section className="bg-blue-600 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Call Today!</h2>
-          <p className="text-5xl font-bold mb-8">+353 (0) 51 293 208</p>
-          <a href="tel:+35351293208" className="bg-white text-blue-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors inline-block">
-            Call Now
-          </a>
-        </div>
-      </section>
-    </div>
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`,
+          color: 'white',
+          py: 10,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: 4,
+              p: 6,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h2" sx={{ mb: 3, fontWeight: 'bold' }}>
+              Ready to Get Started?
+            </Typography>
+            
+            <Typography variant="h6" sx={{ mb: 4, opacity: 0.9, maxWidth: '600px', mx: 'auto' }}>
+              Don't let equipment downtime slow your business. Call today for immediate assistance!
+            </Typography>
+
+            <Box sx={{ mb: 4 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 'bold',
+                  color: 'warning.main',
+                  mb: 1,
+                  fontSize: { xs: '2rem', md: '3rem' },
+                }}
+              >
+                +353 51 293 208
+              </Typography>
+              <Typography variant="body1" sx={{ opacity: 0.8 }}>
+                Available 7 days a week
+              </Typography>
+            </Box>
+
+            <Button
+              href="tel:+35351293208"
+              variant="contained"
+              color="warning"
+              size="large"
+              startIcon={<Phone />}
+              sx={{
+                px: 6,
+                py: 2,
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                color: 'grey.900',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Call Now - Free Quote
+            </Button>
+          </Paper>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

@@ -1,101 +1,485 @@
-import React from "react";
-import { Phone, Mail, MapPin, Smartphone } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Stack,
+  Avatar,
+  Paper,
+  Alert,
+  Chip,
+} from "@mui/material";
+import {
+  Phone,
+  Email,
+  LocationOn,
+  Schedule,
+  Send,
+  CheckCircle,
+  Star,
+  Emergency,
+} from "@mui/icons-material";
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    service: "",
+    message: "",
+  });
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleInputChange = (field) => (event) => {
+    setFormData({
+      ...formData,
+      [field]: event.target.value,
+    });
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        service: "",
+        message: "",
+      });
+    }, 3000);
+  };
+
+  const contactInfo = [
+    {
+      icon: <Phone />,
+      title: "Main Office",
+      content: "+353 (0) 51 293 208",
+      href: "tel:+35351293208",
+      description: "Primary contact line",
+      color: "primary",
+    },
+    {
+      icon: <Phone />,
+      title: "Mobile",
+      content: "+353 (0) 87 250 1934",
+      href: "tel:+353872501934",
+      description: "24/7 emergency support",
+      color: "secondary",
+    },
+    {
+      icon: <Email />,
+      title: "Email",
+      content: "sales@virgilpowerforklifts.com",
+      href: "mailto:sales@virgilpowerforklifts.com",
+      description: "Sales & general inquiries",
+      color: "info",
+    },
+    {
+      icon: <LocationOn />,
+      title: "Location",
+      content: "Waterford, Ireland",
+      description: "Serving all of Ireland",
+      color: "success",
+    },
+  ];
+
+  const benefits = [
+    "25+ years of experience",
+    "Largest forklift inventory in Ireland",
+    "Same-day delivery available",
+    "24/7 emergency support",
+    "Competitive pricing guaranteed",
+  ];
+
   return (
-    <div className="py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold mb-8">Contact Us</h1>
+    <Box sx={{ py: 6 }}>
+      <Container maxWidth="lg">
+        {/* Header */}
+        <Box sx={{ textAlign: "center", mb: 8 }}>
+          <Typography variant="h2" sx={{ fontWeight: "bold", mb: 3 }}>
+            Get In Touch
+          </Typography>
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ maxWidth: "600px", mx: "auto" }}
+          >
+            Ready to discuss your forklift needs? We're here to help with sales,
+            rentals, and service across Ireland
+          </Typography>
+        </Box>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold mb-4">Get in Touch</h2>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-blue-600 mt-1" />
-                  <div>
-                    <p className="font-semibold">Telephone</p>
-                    <a
-                      href="tel:+35351293208"
-                      className="text-blue-600 hover:underline"
-                    >
-                      +353 (0) 51 293 208
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Smartphone className="w-5 h-5 text-blue-600 mt-1" />
-                  <div>
-                    <p className="font-semibold">Mobile</p>
-                    <a
-                      href="tel:+353872501934"
-                      className="text-blue-600 hover:underline"
-                    >
-                      +353 (0) 87 250 1934
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-blue-600 mt-1" />
-                  <div>
-                    <p className="font-semibold">Email</p>
-                    <a
-                      href="mailto:sales@virgilpowerforklifts.com"
-                      className="text-blue-600 hover:underline"
-                    >
-                      sales@virgilpowerforklifts.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-blue-600 mt-1" />
-                  <div>
-                    <p className="font-semibold">Location</p>
-                    <p className="text-gray-700">Waterford, Ireland</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-bold mb-4">Send Message</h2>
-            <div className="space-y-4">
-              <input
-                type="text"
-                placeholder="Your Name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-              <textarea
-                rows="5"
-                placeholder="Message"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-              ></textarea>
-              <button
-                onClick={() =>
-                  alert(
-                    "Please call +353 (0) 51 293 208 or email sales@virgilpowerforklifts.com"
-                  )
-                }
-                className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+        {/* Quick Contact Bar */}
+        <Paper
+          elevation={3}
+          sx={{
+            background: "linear-gradient(135deg, #1976d2 0%, #2e7d32 100%)",
+            color: "white",
+            p: 4,
+            mb: 6,
+            borderRadius: 3,
+          }}
+        >
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={4}>
+              <Card
+                sx={{
+                  bgcolor: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                  color: "white",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease",
+                  "&:hover": { transform: "translateY(-4px)" },
+                }}
+                component="a"
+                href="tel:+35351293208"
               >
-                Send Message
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                <CardContent>
+                  <Phone sx={{ fontSize: 40, mb: 2 }} />
+                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                    Call Us Now
+                  </Typography>
+                  <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                    +353 51 293 208
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
+                    Available 7 days a week
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card
+                sx={{
+                  bgcolor: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                  color: "white",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease",
+                  "&:hover": { transform: "translateY(-4px)" },
+                }}
+                component="a"
+                href="mailto:sales@virgilpowerforklifts.com"
+              >
+                <CardContent>
+                  <Email sx={{ fontSize: 40, mb: 2 }} />
+                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                    Email Us
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    sales@virgilpowerforklifts.com
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
+                    We reply within 2 hours
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <Card
+                sx={{
+                  bgcolor: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                  color: "white",
+                  textAlign: "center",
+                }}
+              >
+                <CardContent>
+                  <LocationOn sx={{ fontSize: 40, mb: 2 }} />
+                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+                    Visit Us
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    Waterford, Ireland
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
+                    All Ireland coverage
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        <Grid container spacing={6}>
+          {/* Contact Information */}
+          <Grid item xs={12} lg={4}>
+            <Stack spacing={4}>
+              {/* Contact Details */}
+              <Card elevation={2}>
+                <CardContent sx={{ p: 4 }}>
+                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+                    Contact Information
+                  </Typography>
+
+                  <Stack spacing={3}>
+                    {contactInfo.map((info, index) => (
+                      <Box key={index}>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          alignItems="flex-start"
+                        >
+                          <Avatar sx={{ bgcolor: `${info.color}.main` }}>
+                            {info.icon}
+                          </Avatar>
+                          <Box>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              {info.title}
+                            </Typography>
+                            {info.href ? (
+                              <Typography
+                                component="a"
+                                href={info.href}
+                                variant="body1"
+                                sx={{
+                                  color: `${info.color}.main`,
+                                  textDecoration: "none",
+                                  fontWeight: "medium",
+                                  "&:hover": { textDecoration: "underline" },
+                                }}
+                              >
+                                {info.content}
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body1"
+                                sx={{ fontWeight: "medium" }}
+                              >
+                                {info.content}
+                              </Typography>
+                            )}
+                            <Typography variant="body2" color="text.secondary">
+                              {info.description}
+                            </Typography>
+                          </Box>
+                        </Stack>
+                      </Box>
+                    ))}
+
+                    <Box>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="flex-start"
+                      >
+                        <Avatar sx={{ bgcolor: "warning.main" }}>
+                          <Schedule />
+                        </Avatar>
+                        <Box>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            Business Hours
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: "medium" }}
+                          >
+                            Mon-Fri: 8AM-6PM
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Emergency support available 24/7
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+
+              {/* Why Choose Us */}
+              <Card elevation={2} sx={{ bgcolor: "success.50" }}>
+                <CardContent sx={{ p: 4 }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    sx={{ mb: 3 }}
+                  >
+                    <Star sx={{ color: "warning.main" }} />
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      Why Choose Virgil Power?
+                    </Typography>
+                  </Stack>
+
+                  <Stack spacing={2}>
+                    {benefits.map((benefit, index) => (
+                      <Stack
+                        key={index}
+                        direction="row"
+                        spacing={1}
+                        alignItems="center"
+                      >
+                        <CheckCircle
+                          sx={{ color: "success.main", fontSize: 20 }}
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: "medium" }}
+                        >
+                          {benefit}
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Stack>
+          </Grid>
+
+          {/* Contact Form */}
+          <Grid item xs={12} lg={8}>
+            <Card elevation={2}>
+              <CardContent sx={{ p: 4 }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                  sx={{ mb: 4 }}
+                >
+                  <Send color="primary" />
+                  <Box>
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                      Send us a Message
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      Get a free quote or ask any questions
+                    </Typography>
+                  </Box>
+                </Stack>
+
+                {showSuccess && (
+                  <Alert severity="success" sx={{ mb: 3 }}>
+                    Thank you for your message! We'll get back to you within 2
+                    hours.
+                  </Alert>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Your Name"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        value={formData.name}
+                        onChange={handleInputChange("name")}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        label="Phone Number"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        value={formData.phone}
+                        onChange={handleInputChange("phone")}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Email Address"
+                        type="email"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange("email")}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Service Needed"
+                        select
+                        variant="outlined"
+                        fullWidth
+                        value={formData.service}
+                        onChange={handleInputChange("service")}
+                        SelectProps={{ native: true }}
+                      >
+                        <option value="">Select a service...</option>
+                        <option value="purchase">Forklift Purchase</option>
+                        <option value="rental">Forklift Rental/Hire</option>
+                        <option value="service">Service & Repair</option>
+                        <option value="general">General Inquiry</option>
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Message"
+                        multiline
+                        rows={5}
+                        variant="outlined"
+                        fullWidth
+                        required
+                        placeholder="Tell us about your forklift needs, timeline, or any specific requirements..."
+                        value={formData.message}
+                        onChange={handleInputChange("message")}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        startIcon={<Send />}
+                        sx={{ px: 4, py: 1.5 }}
+                      >
+                        Send Message
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+
+                {/* Emergency Contact */}
+                <Alert
+                  severity="error"
+                  icon={<Emergency />}
+                  sx={{ mt: 4 }}
+                  action={
+                    <Button
+                      component="a"
+                      href="tel:+353872501934"
+                      color="inherit"
+                      size="small"
+                      variant="outlined"
+                    >
+                      Call Now
+                    </Button>
+                  }
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                    Emergency Breakdown Service
+                  </Typography>
+                  <Typography variant="body2">
+                    Forklift broken down and need immediate replacement? Call
+                    our emergency line: <strong>+353 87 250 1934</strong>
+                  </Typography>
+                </Alert>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 
