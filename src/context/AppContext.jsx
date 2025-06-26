@@ -1,36 +1,36 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { initialForklifts } from "../data/initialData";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { initialForklifts } from '../data/initialData';
 
 const AppContext = createContext();
 
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useApp must be used within AppProvider");
+    throw new Error('useApp must be used within AppProvider');
   }
   return context;
 };
 
 export const AppProvider = ({ children }) => {
   // Navigation state
-  const [currentPage, setCurrentPage] = useState("home");
+  const [currentPage, setCurrentPage] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  
   // Product state
   const [forklifts, setForklifts] = useState(initialForklifts);
   const [selectedForklift, setSelectedForklift] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedBrand, setSelectedBrand] = useState("all");
-  const [sortBy, setSortBy] = useState("default");
-  const [viewMode, setViewMode] = useState("grid");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedBrand, setSelectedBrand] = useState('all');
+  const [sortBy, setSortBy] = useState('default');
+  const [viewMode, setViewMode] = useState('grid');
   const [showPerPage, setShowPerPage] = useState(12);
   const [currentPageNum, setCurrentPageNum] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-
+  const [searchQuery, setSearchQuery] = useState('');
+  
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-
+  
   // Edit/Create state
   const [isEditing, setIsEditing] = useState(false);
   const [editingForklift, setEditingForklift] = useState(null);
@@ -46,25 +46,25 @@ export const AppProvider = ({ children }) => {
     setCurrentPage(page);
     setIsMenuOpen(false);
     setSelectedForklift(null);
-    setSelectedCategory("all");
-    setSelectedBrand("all");
+    setSelectedCategory('all');
+    setSelectedBrand('all');
     setCurrentPageNum(1);
-    setSearchQuery("");
+    setSearchQuery('');
   };
 
   // Authentication functions
   const handleLogin = (username, password) => {
-    if (username === "admin" && password === "Virgil1973") {
+    if (username === 'admin' && password === 'Virgil1973') {
       setIsAuthenticated(true);
       setShowLoginModal(false);
     } else {
-      alert("Invalid credentials. Please try again.");
+      alert('Invalid credentials. Please try again.');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setCurrentPage("home");
+    setCurrentPage('home');
   };
 
   // Filter and sort functions
@@ -72,30 +72,29 @@ export const AppProvider = ({ children }) => {
     let filtered = [...forklifts];
 
     if (searchQuery) {
-      filtered = filtered.filter(
-        (f) =>
-          f.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          f.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          f.sku.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(f => 
+        f.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        f.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        f.sku.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((f) => f.category === selectedCategory);
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(f => f.category === selectedCategory);
     }
 
-    if (selectedBrand !== "all") {
-      filtered = filtered.filter((f) => f.brand === selectedBrand);
+    if (selectedBrand !== 'all') {
+      filtered = filtered.filter(f => f.brand === selectedBrand);
     }
 
     switch (sortBy) {
-      case "name":
+      case 'name':
         filtered.sort((a, b) => a.model.localeCompare(b.model));
         break;
-      case "price":
+      case 'price':
         filtered.sort((a, b) => a.price - b.price);
         break;
-      case "price-desc":
+      case 'price-desc':
         filtered.sort((a, b) => b.price - a.price);
         break;
       default:
@@ -108,7 +107,7 @@ export const AppProvider = ({ children }) => {
   // CRUD Functions
   const handleCreateForklift = () => {
     const newForklift = {
-      id: Math.max(...forklifts.map((f) => f.id)) + 1,
+      id: Math.max(...forklifts.map(f => f.id)) + 1,
       sku: "",
       brand: "Toyota",
       model: "",
@@ -121,19 +120,18 @@ export const AppProvider = ({ children }) => {
       hirePrice: "€0/week",
       status: "In Stock",
       featured: false,
-      image:
-        "https://images.unsplash.com/photo-1581092160607-ee22df5ddc37?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1581092160607-ee22df5ddc37?w=600&h=400&fit=crop",
       features: [],
       description: "",
-      specs: {},
+      specs: {}
     };
     setEditingForklift(newForklift);
     setIsEditing(true);
-    setCurrentPage("admin-edit");
+    setCurrentPage('admin-edit');
   };
 
   const handleDeleteForklift = (id) => {
-    setForklifts(forklifts.filter((f) => f.id !== id));
+    setForklifts(forklifts.filter(f => f.id !== id));
     setShowDeleteConfirm(false);
     setDeleteId(null);
   };
@@ -142,30 +140,25 @@ export const AppProvider = ({ children }) => {
     const formattedPrice = `€${forkliftData.price.toLocaleString()}`;
     const updatedForklift = {
       ...forkliftData,
-      priceFormatted: formattedPrice,
+      priceFormatted: formattedPrice
     };
 
-    if (forkliftData.id && forklifts.find((f) => f.id === forkliftData.id)) {
-      setForklifts(
-        forklifts.map((f) => (f.id === forkliftData.id ? updatedForklift : f))
-      );
+    if (forkliftData.id && forklifts.find(f => f.id === forkliftData.id)) {
+      setForklifts(forklifts.map(f => f.id === forkliftData.id ? updatedForklift : f));
     } else {
       setForklifts([...forklifts, updatedForklift]);
     }
-
+    
     setIsEditing(false);
     setEditingForklift(null);
-    setCurrentPage("admin");
+    setCurrentPage('admin');
   };
 
   // Pagination
   const filteredForklifts = filterAndSortForklifts();
   const totalPages = Math.ceil(filteredForklifts.length / showPerPage);
   const startIdx = (currentPageNum - 1) * showPerPage;
-  const paginatedForklifts = filteredForklifts.slice(
-    startIdx,
-    startIdx + showPerPage
-  );
+  const paginatedForklifts = filteredForklifts.slice(startIdx, startIdx + showPerPage);
 
   const value = {
     // State
@@ -189,7 +182,7 @@ export const AppProvider = ({ children }) => {
     filteredForklifts,
     paginatedForklifts,
     totalPages,
-
+    
     // Setters
     setCurrentPage,
     setIsMenuOpen,
@@ -208,7 +201,7 @@ export const AppProvider = ({ children }) => {
     setEditingForklift,
     setShowDeleteConfirm,
     setDeleteId,
-
+    
     // Functions
     navigateTo,
     handleLogin,
@@ -216,8 +209,12 @@ export const AppProvider = ({ children }) => {
     handleCreateForklift,
     handleDeleteForklift,
     handleSaveForklift,
-    filterAndSortForklifts,
+    filterAndSortForklifts
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
 };
