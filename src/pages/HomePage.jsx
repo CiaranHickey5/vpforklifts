@@ -90,7 +90,7 @@ const HomePage = () => {
             width: 200,
             height: 200,
             borderRadius: "50%",
-            background: "rgba(255, 140, 0, 0.1)",
+            background: "rgba(255, 255, 255, 0.1)",
             filter: "blur(60px)",
           }}
         />
@@ -102,7 +102,7 @@ const HomePage = () => {
             width: 300,
             height: 300,
             borderRadius: "50%",
-            background: "rgba(25, 118, 210, 0.05)",
+            background: "rgba(255, 140, 0, 0.1)",
             filter: "blur(80px)",
           }}
         />
@@ -113,9 +113,9 @@ const HomePage = () => {
               icon={<Star />}
               label="Ireland's #1 Forklift Specialists"
               sx={{
-                bgcolor: "rgba(255, 140, 0, 0.2)",
-                color: "#ff8c00",
-                border: "1px solid rgba(255, 140, 0, 0.3)",
+                bgcolor: "rgba(255, 140, 0, 0.9)",
+                color: "white",
+                border: "1px solid rgba(255, 140, 0, 1)",
                 mb: 4,
                 backdropFilter: "blur(10px)",
                 fontWeight: "bold",
@@ -129,6 +129,7 @@ const HomePage = () => {
                 fontWeight: "bold",
                 mb: 3,
                 lineHeight: 1.1,
+                color: "white",
               }}
             >
               Forklift hire from{" "}
@@ -146,6 +147,7 @@ const HomePage = () => {
                 maxWidth: "800px",
                 mx: "auto",
                 lineHeight: 1.4,
+                color: "white",
               }}
             >
               We are specialists in the supply and hire of new and refurbished
@@ -232,8 +234,9 @@ const HomePage = () => {
 
       {/* Services Section */}
       <Box sx={{ py: 10, bgcolor: "background.default" }}>
-        <Container maxWidth="lg">
-          <Box textAlign="center" sx={{ mb: 8 }}>
+        {/* Section Header */}
+        <Container maxWidth="lg" sx={{ mb: 8 }}>
+          <Box textAlign="center">
             <Typography variant="h2" sx={{ mb: 2, fontWeight: "bold" }}>
               Our Services
             </Typography>
@@ -246,16 +249,23 @@ const HomePage = () => {
               your forklift needs covered
             </Typography>
           </Box>
+        </Container>
 
-          <Grid container spacing={4}>
+        {/* Service Cards - Responsive and Centered */}
+        <Container maxWidth="xl">
+          <Grid container spacing={0} justifyContent="center">
             {services.map((service, index) => (
-              <Grid item xs={12} md={4} key={index}>
+              <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={index}>
                 <Card
                   sx={{
                     height: "100%",
                     transition: "all 0.3s ease",
                     cursor: "pointer",
                     border: "2px solid transparent",
+                    borderRadius: 0,
+                    minHeight: { xs: "300px", sm: "320px", md: "350px" },
+                    maxWidth: { lg: "350px", xl: "400px" },
+                    mx: "auto", // Center the cards
                     "&:hover": {
                       transform: "translateY(-8px)",
                       boxShadow: theme.shadows[12],
@@ -265,13 +275,14 @@ const HomePage = () => {
                           : service.color === "primary"
                           ? "#1976d2"
                           : "#0288d1",
+                      zIndex: 1,
                     },
                   }}
                   onClick={service.action}
                 >
                   <CardContent
                     sx={{
-                      p: 4,
+                      p: { xs: 2, sm: 2.5, md: 3 },
                       textAlign: "center",
                       height: "100%",
                       display: "flex",
@@ -286,25 +297,40 @@ const HomePage = () => {
                             : service.color === "primary"
                             ? "#1976d2"
                             : "#0288d1",
-                        width: 80,
-                        height: 80,
+                        width: { xs: 50, sm: 55, md: 60 },
+                        height: { xs: 50, sm: 55, md: 60 },
                         mx: "auto",
-                        mb: 3,
+                        mb: { xs: 1.5, md: 2 },
                       }}
                     >
                       {React.cloneElement(service.icon, {
-                        sx: { fontSize: 40, color: "white" },
+                        sx: {
+                          fontSize: { xs: 25, sm: 28, md: 30 },
+                          color: "white",
+                        },
                       })}
                     </Avatar>
 
-                    <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        mb: { xs: 1.5, md: 2 },
+                        fontWeight: "bold",
+                        fontSize: { xs: "1rem", sm: "1.1rem", md: "1.25rem" },
+                      }}
+                    >
                       {service.title}
                     </Typography>
 
                     <Typography
-                      variant="body1"
+                      variant="body2"
                       color="text.secondary"
-                      sx={{ mb: 4, lineHeight: 1.6, flexGrow: 1 }}
+                      sx={{
+                        mb: { xs: 2, md: 3 },
+                        lineHeight: 1.4,
+                        flexGrow: 1,
+                        fontSize: { xs: "0.8rem", sm: "0.85rem", md: "0.9rem" },
+                      }}
                     >
                       {service.description}
                     </Typography>
@@ -314,8 +340,13 @@ const HomePage = () => {
                       variant="outlined"
                       color={service.color}
                       endIcon={<ArrowForward />}
+                      size="small"
                       fullWidth
-                      sx={{ mt: "auto" }}
+                      sx={{
+                        mt: "auto",
+                        fontSize: { xs: "0.7rem", sm: "0.75rem", md: "0.8rem" },
+                        py: { xs: 0.5, md: 1 },
+                      }}
                     >
                       {service.actionText}
                     </Button>
