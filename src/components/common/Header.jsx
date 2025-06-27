@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,13 +11,12 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Chip,
   Container,
   Stack,
   useMediaQuery,
   useTheme,
   Avatar,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
@@ -29,12 +28,12 @@ import {
   AdminPanelSettings,
   Logout,
   Login,
-} from '@mui/icons-material';
-import { useApp } from '../../context/AppContext';
+} from "@mui/icons-material";
+import { useApp } from "../../context/AppContext";
 
 const Header = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const {
     navigateTo,
     isMenuOpen,
@@ -45,23 +44,27 @@ const Header = () => {
   } = useApp();
 
   const menuItems = [
-    { label: 'Home', page: 'home', icon: <Home /> },
-    { label: 'Products', page: 'shop', icon: <Store /> },
-    { label: 'Contact', page: 'contact', icon: <ContactPhone /> },
+    { label: "Home", page: "home", icon: <Home /> },
+    { label: "Products", page: "shop", icon: <Store /> },
+    { label: "Contact", page: "contact", icon: <ContactPhone /> },
   ];
 
   if (isAuthenticated) {
-    menuItems.push({ label: 'Admin', page: 'admin', icon: <AdminPanelSettings /> });
+    menuItems.push({
+      label: "Admin",
+      page: "admin",
+      icon: <AdminPanelSettings />,
+    });
   }
 
   return (
     <>
       {/* Top Contact Bar */}
-      <Box sx={{ bgcolor: 'grey.900', color: 'white', py: 1 }}>
+      <Box sx={{ bgcolor: "grey.900", color: "white", py: 1 }}>
         <Container maxWidth="xl">
-          <Stack 
-            direction="row" 
-            justifyContent="space-between" 
+          <Stack
+            direction="row"
+            justifyContent="space-between"
             alignItems="center"
             spacing={2}
           >
@@ -69,10 +72,10 @@ const Header = () => {
               <Button
                 href="tel:+35351293208"
                 startIcon={<Phone />}
-                sx={{ 
-                  color: 'inherit',
-                  textTransform: 'none',
-                  '&:hover': { color: 'primary.light' }
+                sx={{
+                  color: "inherit",
+                  textTransform: "none",
+                  "&:hover": { color: "#ff8c00" },
                 }}
                 size="small"
               >
@@ -82,10 +85,10 @@ const Header = () => {
                 <Button
                   href="mailto:sales@virgilpowerforklifts.com"
                   startIcon={<Email />}
-                  sx={{ 
-                    color: 'inherit',
-                    textTransform: 'none',
-                    '&:hover': { color: 'primary.light' }
+                  sx={{
+                    color: "inherit",
+                    textTransform: "none",
+                    "&:hover": { color: "#ff8c00" },
                   }}
                   size="small"
                 >
@@ -99,10 +102,10 @@ const Header = () => {
                 <Button
                   onClick={handleLogout}
                   startIcon={<Logout />}
-                  sx={{ 
-                    color: 'error.light',
-                    textTransform: 'none',
-                    fontSize: '0.875rem'
+                  sx={{
+                    color: "error.light",
+                    textTransform: "none",
+                    fontSize: "0.875rem",
                   }}
                   size="small"
                 >
@@ -112,10 +115,10 @@ const Header = () => {
                 <Button
                   onClick={() => setShowLoginModal(true)}
                   startIcon={<Login />}
-                  sx={{ 
-                    color: 'primary.light',
-                    textTransform: 'none',
-                    fontSize: '0.875rem'
+                  sx={{
+                    color: "#ff8c00",
+                    textTransform: "none",
+                    fontSize: "0.875rem",
                   }}
                   size="small"
                 >
@@ -133,26 +136,63 @@ const Header = () => {
           <Toolbar sx={{ py: 1 }}>
             {/* Logo */}
             <Button
-              onClick={() => navigateTo('home')}
-              sx={{ 
-                mr: 'auto',
-                textTransform: 'none',
-                color: 'inherit',
-                '&:hover': { bgcolor: 'transparent' }
+              onClick={() => navigateTo("home")}
+              sx={{
+                mr: "auto",
+                textTransform: "none",
+                color: "inherit",
+                "&:hover": { bgcolor: "transparent" },
               }}
             >
               <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    VPF
+                <Avatar
+                  sx={{
+                    bgcolor: "#1a1a1a",
+                    width: 48,
+                    height: 48,
+                    border: "2px solid #ff8c00",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", color: "#ff8c00" }}
+                  >
+                    VP
                   </Typography>
                 </Avatar>
                 <Box>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-                    Virgil Power Forklifts
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Ireland's Forklift Specialists
+                  <Stack direction="row" spacing={0.5} alignItems="baseline">
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: "bold",
+                        color: "#ff8c00",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      VIRGIL
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: "bold",
+                        color: "text.primary",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      POWER
+                    </Typography>
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: "medium",
+                      letterSpacing: "1px",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Forklifts
                   </Typography>
                 </Box>
               </Stack>
@@ -167,21 +207,33 @@ const Header = () => {
                     onClick={() => navigateTo(item.page)}
                     startIcon={item.icon}
                     sx={{
-                      color: item.page === 'admin' ? 'primary.main' : 'text.primary',
-                      fontWeight: item.page === 'admin' ? 'bold' : 'normal',
+                      color: item.page === "admin" ? "#ff8c00" : "text.primary",
+                      fontWeight: item.page === "admin" ? "bold" : "normal",
+                      "&:hover": {
+                        bgcolor:
+                          item.page === "admin"
+                            ? "rgba(255, 140, 0, 0.1)"
+                            : "rgba(0, 0, 0, 0.04)",
+                      },
                     }}
                   >
                     {item.label}
                   </Button>
                 ))}
-                
+
                 {/* CTA Button */}
                 <Button
                   href="tel:+35351293208"
                   variant="contained"
-                  color="secondary"
                   startIcon={<Phone />}
-                  sx={{ ml: 2 }}
+                  sx={{
+                    ml: 2,
+                    bgcolor: "#ff8c00",
+                    color: "white",
+                    "&:hover": {
+                      bgcolor: "#ff6b00",
+                    },
+                  }}
                 >
                   Call Now
                 </Button>
@@ -209,12 +261,19 @@ const Header = () => {
         open={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         PaperProps={{
-          sx: { width: 280, bgcolor: 'background.default' }
+          sx: { width: 280, bgcolor: "background.default" },
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               Menu
             </Typography>
             <IconButton onClick={() => setIsMenuOpen(false)}>
@@ -224,26 +283,31 @@ const Header = () => {
 
           <List>
             {menuItems.map((item) => (
-              <ListItem 
+              <ListItem
                 key={item.page}
-                button 
+                button
                 onClick={() => navigateTo(item.page)}
-                sx={{ 
-                  borderRadius: 2, 
+                sx={{
+                  borderRadius: 2,
                   mb: 1,
-                  bgcolor: item.page === 'admin' ? 'primary.50' : 'transparent'
+                  bgcolor:
+                    item.page === "admin"
+                      ? "rgba(255, 140, 0, 0.1)"
+                      : "transparent",
                 }}
               >
-                <ListItemIcon sx={{ color: item.page === 'admin' ? 'primary.main' : 'inherit' }}>
+                <ListItemIcon
+                  sx={{ color: item.page === "admin" ? "#ff8c00" : "inherit" }}
+                >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText 
-                  primary={item.label} 
-                  sx={{ 
-                    '& .MuiTypography-root': { 
-                      fontWeight: item.page === 'admin' ? 'bold' : 'normal',
-                      color: item.page === 'admin' ? 'primary.main' : 'inherit'
-                    }
+                <ListItemText
+                  primary={item.label}
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontWeight: item.page === "admin" ? "bold" : "normal",
+                      color: item.page === "admin" ? "#ff8c00" : "inherit",
+                    },
                   }}
                 />
               </ListItem>
@@ -254,10 +318,16 @@ const Header = () => {
             <Button
               href="tel:+35351293208"
               variant="contained"
-              color="secondary"
               fullWidth
               startIcon={<Phone />}
               size="large"
+              sx={{
+                bgcolor: "#ff8c00",
+                color: "white",
+                "&:hover": {
+                  bgcolor: "#ff6b00",
+                },
+              }}
             >
               Call Now - Free Quote
             </Button>
