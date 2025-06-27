@@ -121,104 +121,86 @@ const ContactPage = () => {
         <Paper
           elevation={3}
           sx={{
-            background: "linear-gradient(135deg, #1976d2 0%, #ff8c00 100%)",
+            background: "linear-gradient(to right, #1976d2, #ff8c00)",
             color: "white",
             p: 4,
             mb: 6,
             borderRadius: 3,
           }}
         >
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              <Card
-                sx={{
-                  bgcolor: "rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(10px)",
-                  color: "white",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    bgcolor: "rgba(255,255,255,0.2)",
-                  },
-                }}
-                component="a"
-                href="tel:+35351293208"
-              >
-                <CardContent>
-                  <Phone sx={{ fontSize: 40, mb: 2 }} />
+          <Grid container spacing={4} justifyContent="center">
+            {[
+              {
+                icon: <Phone />,
+                title: "Call Us Now",
+                subtitle: "+353 51 293 208",
+                description: "Available 7 days a week",
+                href: "tel:+35351293208",
+              },
+              {
+                icon: <Email />,
+                title: "Email Us",
+                subtitle: "sales@virgilpowerforklifts.com",
+                description: "We reply within 2 hours",
+                href: "mailto:sales@virgilpowerforklifts.com",
+              },
+              {
+                icon: <LocationOn />,
+                title: "Visit Us",
+                subtitle: "Waterford, Ireland",
+                description: "All Ireland coverage",
+                href: null,
+              },
+            ].map((item, idx) => (
+              <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Card
+                  component={item.href ? "a" : "div"}
+                  href={item.href || undefined}
+                  elevation={0}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center",
+                    color: "black",
+                    bgcolor: "rgba(255, 255, 255, 0.95)",
+                    borderRadius: 2,
+                    p: 4,
+                    textDecoration: "none",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                    "&:hover": {
+                      transform: "translateY(-4px)",
+                      boxShadow: 6,
+                      bgcolor: "white",
+                    },
+                  }}
+                >
+                  <Avatar
+                    sx={{
+                      bgcolor: "#1976d2",
+                      color: "white",
+                      width: 56,
+                      height: 56,
+                      mb: 2,
+                    }}
+                  >
+                    {item.icon}
+                  </Avatar>
                   <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                    Call Us Now
+                    {item.title}
                   </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                    +353 51 293 208
+                  <Typography variant="subtitle1" sx={{ fontWeight: "medium" }}>
+                    {item.subtitle}
                   </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
-                    Available 7 days a week
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "text.secondary", mt: 1 }}
+                  >
+                    {item.description}
                   </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Card
-                sx={{
-                  bgcolor: "rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(10px)",
-                  color: "white",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "transform 0.3s ease",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  "&:hover": {
-                    transform: "translateY(-4px)",
-                    bgcolor: "rgba(255,255,255,0.2)",
-                  },
-                }}
-                component="a"
-                href="mailto:sales@virgilpowerforklifts.com"
-              >
-                <CardContent>
-                  <Email sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                    Email Us
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    sales@virgilpowerforklifts.com
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
-                    We reply within 2 hours
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Card
-                sx={{
-                  bgcolor: "rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(10px)",
-                  color: "white",
-                  textAlign: "center",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                }}
-              >
-                <CardContent>
-                  <LocationOn sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                    Visit Us
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    Waterford, Ireland
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.8, mt: 1 }}>
-                    All Ireland coverage
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Paper>
 
