@@ -23,6 +23,9 @@ import {
   CheckCircle,
   Star,
   Emergency,
+  Directions,
+  Navigation,
+  MyLocation,
 } from "@mui/icons-material";
 
 const ContactPage = () => {
@@ -34,6 +37,33 @@ const ContactPage = () => {
     message: "",
   });
   const [showSuccess, setShowSuccess] = useState(false);
+  const [mapError, setMapError] = useState(false);
+
+  // Secure environment variables
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const BUSINESS_LAT = import.meta.env.VITE_BUSINESS_LAT;
+  const BUSINESS_LNG = import.meta.env.VITE_BUSINESS_LNG;
+  const BUSINESS_ADDRESS = import.meta.env.VITE_BUSINESS_ADDRESS;
+  const BUSINESS_NAME = import.meta.env.VITE_BUSINESS_NAME;
+
+  // Fallback if environment variables are not set
+  if (!GOOGLE_MAPS_API_KEY) {
+    console.warn("Google Maps API key not found in environment variables");
+  }
+
+  // Google Maps URLs using exact coordinates for Waterford location
+  const coordinatesString = `${BUSINESS_LAT},${BUSINESS_LNG}`;
+  const mapEmbedUrl = GOOGLE_MAPS_API_KEY
+    ? `https://www.google.com/maps/embed/v1/view?key=${GOOGLE_MAPS_API_KEY}&center=${coordinatesString}&zoom=15&maptype=roadmap`
+    : `https://maps.google.com/maps?q=${coordinatesString}&output=embed`;
+
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinatesString}`;
+  const mapsUrl = `https://maps.google.com/?q=${coordinatesString}`;
+
+  // For business name in URLs if needed
+  const businessLocationUrl = `https://www.google.com/maps/search/${encodeURIComponent(
+    BUSINESS_NAME + " " + BUSINESS_ADDRESS
+  )}`;
 
   const handleInputChange = (field) => (event) => {
     setFormData({
@@ -55,6 +85,11 @@ const ContactPage = () => {
         message: "",
       });
     }, 3000);
+  };
+
+  const handleMapError = () => {
+    setMapError(true);
+    console.error("Failed to load Google Maps");
   };
 
   const contactInfo = [
@@ -205,7 +240,7 @@ const ContactPage = () => {
         </Paper>
 
         <Grid container spacing={6}>
-          {/* Contact Information */}
+          {/* Left Column - Contact Information and Map */}
           <Grid item xs={12} lg={4}>
             <Stack spacing={4}>
               {/* Contact Details */}
@@ -306,7 +341,154 @@ const ContactPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Why Choose Us - FIXED: Updated background color */}
+              {/* Professional Google Maps Location */}
+              <Card elevation={2}>
+                <CardContent sx={{ p: 0 }}>
+                  <Box sx={{ p: 3, pb: 2 }}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      sx={{ mb: 2 }}
+                    >
+                      <MyLocation sx={{ color: "#ff8c00" }} />
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Find Us Here
+                      </Typography>
+                    </Stack>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 2 }}
+                    >
+                      Click the map for instant GPS navigation to our location
+                    </Typography>
+                  </Box>
+
+                  {/* Enhanced Map Container */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: "100%",
+                      height: 350,
+                      borderRadius: "0 0 16px 16px",
+                      overflow: "hidden",
+                      border: "3px solid #e0e0e0",
+                      boxShadow: "inset 0 2px 8px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    {!mapError ? (
+                      <iframe
+                        src={mapEmbedUrl}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={`${BUSINESS_NAME} Location - Waterford, Ireland`}
+                        onError={handleMapError}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          height: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          bgcolor: "grey.100",
+                          flexDirection: "column",
+                          p: 3,
+                        }}
+                      >
+                        <LocationOn
+                          sx={{ fontSize: 48, color: "grey.400", mb: 1 }}
+                        />
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          textAlign="center"
+                        >
+                          Map temporarily unavailable
+                          <br />
+                          Use the buttons below for directions
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+
+                  {/* Enhanced Action Buttons */}
+                  <Box sx={{ p: 3, pt: 2 }}>
+                    <Stack spacing={2}>
+                      <Stack direction="row" spacing={2}>
+                        <Button
+                          component="a"
+                          href={directionsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="contained"
+                          size="medium"
+                          startIcon={<Directions />}
+                          sx={{
+                            flex: 1,
+                            bgcolor: "#1976d2",
+                            "&:hover": { bgcolor: "#115293" },
+                          }}
+                        >
+                          Get Directions
+                        </Button>
+                        <Button
+                          component="a"
+                          href={mapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          variant="outlined"
+                          size="medium"
+                          startIcon={<Navigation />}
+                          sx={{
+                            flex: 1,
+                            borderColor: "#ff8c00",
+                            color: "#ff8c00",
+                            "&:hover": {
+                              bgcolor: "rgba(255, 140, 0, 0.04)",
+                              borderColor: "#e67c00",
+                            },
+                          }}
+                        >
+                          Open Maps
+                        </Button>
+                      </Stack>
+
+                      {/* Coordinates Display */}
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          p: 2,
+                          bgcolor: "grey.50",
+                          textAlign: "center",
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: "block", mb: 0.5 }}
+                        >
+                          📍 {BUSINESS_ADDRESS}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontFamily: "monospace" }}
+                        >
+                          GPS: {BUSINESS_LAT}, {BUSINESS_LNG}
+                        </Typography>
+                      </Paper>
+                    </Stack>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Why Choose Us */}
               <Card
                 elevation={2}
                 sx={{ bgcolor: "primary.50", border: "1px solid #1976d2" }}
@@ -347,7 +529,7 @@ const ContactPage = () => {
             </Stack>
           </Grid>
 
-          {/* Contact Form */}
+          {/* Right Column - Contact Form */}
           <Grid item xs={12} lg={8}>
             <Card elevation={2}>
               <CardContent sx={{ p: 4 }}>
@@ -465,7 +647,7 @@ const ContactPage = () => {
                   </Grid>
                 </form>
 
-                {/* Emergency Contact - FIXED: Updated styling */}
+                {/* Emergency Contact */}
                 <Alert
                   severity="error"
                   icon={<Emergency />}
