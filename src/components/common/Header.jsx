@@ -15,7 +15,6 @@ import {
   Stack,
   useMediaQuery,
   useTheme,
-  Avatar,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -30,6 +29,7 @@ import {
   Login,
 } from "@mui/icons-material";
 import { useApp } from "../../context/AppContext";
+import Logo from "./Logo";
 
 const Header = () => {
   const theme = useTheme();
@@ -135,68 +135,18 @@ const Header = () => {
         <Container maxWidth="xl">
           <Toolbar sx={{ py: 1 }}>
             {/* Logo */}
-            <Button
-              onClick={() => navigateTo("home")}
-              sx={{
-                mr: "auto",
-                textTransform: "none",
-                color: "inherit",
-                "&:hover": { bgcolor: "transparent" },
-              }}
-            >
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar
-                  sx={{
-                    bgcolor: "#1a1a1a",
-                    width: 48,
-                    height: 48,
-                    border: "2px solid #ff8c00",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "bold", color: "#ff8c00" }}
-                  >
-                    VP
-                  </Typography>
-                </Avatar>
-                <Box>
-                  <Stack direction="row" spacing={0.5} alignItems="baseline">
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: "bold",
-                        color: "#ff8c00",
-                        letterSpacing: "0.5px",
-                      }}
-                    >
-                      VIRGIL
-                    </Typography>
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: "bold",
-                        color: "text.primary",
-                        letterSpacing: "0.5px",
-                      }}
-                    >
-                      POWER
-                    </Typography>
-                  </Stack>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: "text.secondary",
-                      fontWeight: "medium",
-                      letterSpacing: "1px",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Forklifts
-                  </Typography>
-                </Box>
-              </Stack>
-            </Button>
+            <Box sx={{ mr: "auto" }}>
+              <Logo
+                height={{ xs: 40, sm: 48, md: 56 }}
+                onClick={() => navigateTo("home")}
+                sx={{
+                  transition: "opacity 0.3s ease",
+                  "&:hover": {
+                    opacity: 0.8,
+                  },
+                }}
+              />
+            </Box>
 
             {/* Desktop Navigation */}
             {!isMobile && (

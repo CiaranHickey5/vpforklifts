@@ -87,54 +87,8 @@ const Footer = () => {
           {/* Company Info */}
           <Grid item xs={12} md={4}>
             <Stack spacing={3}>
-              {/* Logo & Brand */}
+              {/* Company Description */}
               <Box>
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  alignItems="center"
-                  sx={{ mb: 2 }}
-                >
-                  <Avatar
-                    sx={{
-                      bgcolor: "#ff8c00",
-                      width: 48,
-                      height: 48,
-                      color: "white",
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                      VP
-                    </Typography>
-                  </Avatar>
-                  <Box>
-                    <Stack direction="row" spacing={0.5} alignItems="baseline">
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: "bold", color: "#ff8c00" }}
-                      >
-                        VIRGIL
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: "bold", color: "white" }}
-                      >
-                        POWER
-                      </Typography>
-                    </Stack>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: "grey.400",
-                        textTransform: "uppercase",
-                        letterSpacing: 1,
-                      }}
-                    >
-                      Forklifts
-                    </Typography>
-                  </Box>
-                </Stack>
-
                 <Typography
                   variant="body1"
                   sx={{ color: "grey.300", mb: 3, lineHeight: 1.6 }}
