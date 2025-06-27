@@ -547,24 +547,35 @@ const ContactPage = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl fullWidth sx={{ mb: 3 }}>
-                    <InputLabel id="service-label">Service</InputLabel>
-                    <Select
-                      labelId="service-label"
-                      id="service"
-                      value={formData.service}
-                      label="Service"
-                      onChange={handleInputChange("service")}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value="purchase">Forklift Purchase</MenuItem>
-                      <MenuItem value="rental">Forklift Rental/Hire</MenuItem>
-                      <MenuItem value="service">Service & Repair</MenuItem>
-                      <MenuItem value="general">General Inquiry</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <TextField
+                    select
+                    label="Service Needed"
+                    value={formData.service}
+                    onChange={handleInputChange("service")}
+                    fullWidth
+                    variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    SelectProps={{
+                      displayEmpty: true,
+                      MenuProps: {
+                        PaperProps: {
+                          style: {
+                            maxHeight: 224,
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Choose a service option...
+                    </MenuItem>
+                    <MenuItem value="purchase">Forklift Purchase</MenuItem>
+                    <MenuItem value="rental">Forklift Rental/Hire</MenuItem>
+                    <MenuItem value="service">Service & Repair</MenuItem>
+                    <MenuItem value="general">General Inquiry</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
