@@ -137,7 +137,7 @@ const Header = () => {
             {/* Logo */}
             <Box sx={{ mr: "auto" }}>
               <Logo
-                height={{ xs: 40, sm: 48, md: 56 }}
+                height={{ xs: 50, sm: 60, md: 72 }}
                 onClick={() => navigateTo("home")}
                 sx={{
                   transition: "opacity 0.3s ease",
