@@ -13,6 +13,10 @@ import {
   Paper,
   Alert,
   Chip,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import {
   Phone,
@@ -39,17 +43,17 @@ const ContactPage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [mapError, setMapError] = useState(false);
 
-  // Secure environment variables
+  // Environment variables with fallbacks
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const BUSINESS_LAT = import.meta.env.VITE_BUSINESS_LAT;
-  const BUSINESS_LNG = import.meta.env.VITE_BUSINESS_LNG;
-  const BUSINESS_ADDRESS = import.meta.env.VITE_BUSINESS_ADDRESS;
-  const BUSINESS_NAME = import.meta.env.VITE_BUSINESS_NAME;
-
-  // Fallback if environment variables are not set
-  if (!GOOGLE_MAPS_API_KEY) {
-    console.warn("Google Maps API key not found in environment variables");
-  }
+  const BUSINESS_LAT =
+    import.meta.env.VITE_BUSINESS_LAT || "52.150543189614794";
+  const BUSINESS_LNG =
+    import.meta.env.VITE_BUSINESS_LNG || "-7.474104689710655";
+  const BUSINESS_ADDRESS =
+    import.meta.env.VITE_BUSINESS_ADDRESS ||
+    "Waterford, County Waterford, Ireland";
+  const BUSINESS_NAME =
+    import.meta.env.VITE_BUSINESS_NAME || "Virgil Power Forklifts";
 
   // Google Maps URLs using exact coordinates for Waterford location
   const coordinatesString = `${BUSINESS_LAT},${BUSINESS_LNG}`;
@@ -59,11 +63,6 @@ const ContactPage = () => {
 
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinatesString}`;
   const mapsUrl = `https://maps.google.com/?q=${coordinatesString}`;
-
-  // For business name in URLs if needed
-  const businessLocationUrl = `https://www.google.com/maps/search/${encodeURIComponent(
-    BUSINESS_NAME + " " + BUSINESS_ADDRESS
-  )}`;
 
   const handleInputChange = (field) => (event) => {
     setFormData({
@@ -120,18 +119,10 @@ const ContactPage = () => {
     {
       icon: <LocationOn />,
       title: "Location",
-      content: "Waterford, Ireland",
+      content: BUSINESS_ADDRESS,
       description: "Serving all of Ireland",
       color: "secondary",
     },
-  ];
-
-  const benefits = [
-    "25+ years of experience",
-    "Largest forklift inventory in Ireland",
-    "Same-day delivery available",
-    "24/7 emergency support",
-    "Competitive pricing guaranteed",
   ];
 
   return (
@@ -182,7 +173,7 @@ const ContactPage = () => {
               {
                 icon: <LocationOn />,
                 title: "Visit Us",
-                subtitle: "Waterford, Ireland",
+                subtitle: BUSINESS_ADDRESS,
                 description: "All Ireland coverage",
                 href: null,
               },
@@ -239,457 +230,415 @@ const ContactPage = () => {
           </Grid>
         </Paper>
 
-        <Grid container spacing={6}>
-          {/* Left Column - Contact Information and Map */}
-          <Grid item xs={12} lg={4}>
-            <Stack spacing={4}>
-              {/* Contact Details */}
-              <Card elevation={2}>
-                <CardContent sx={{ p: 4 }}>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-                    Contact Information
-                  </Typography>
+        {/* Contact Details and Map Row */}
+        <Grid container spacing={4} sx={{ mb: 6 }}>
+          {/* Contact Information */}
+          <Grid item xs={12} md={6}>
+            <Card elevation={2}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
+                  Contact Information
+                </Typography>
 
-                  <Stack spacing={3}>
-                    {contactInfo.map((info, index) => (
-                      <Box key={index}>
-                        <Stack
-                          direction="row"
-                          spacing={2}
-                          alignItems="flex-start"
-                        >
-                          <Avatar
-                            sx={{
-                              bgcolor:
-                                info.color === "secondary"
-                                  ? "#ff8c00"
-                                  : "#1976d2",
-                              color: "white",
-                            }}
-                          >
-                            {info.icon}
-                          </Avatar>
-                          <Box>
-                            <Typography
-                              variant="subtitle1"
-                              sx={{ fontWeight: "bold" }}
-                            >
-                              {info.title}
-                            </Typography>
-                            {info.href ? (
-                              <Typography
-                                component="a"
-                                href={info.href}
-                                variant="body1"
-                                sx={{
-                                  color:
-                                    info.color === "secondary"
-                                      ? "#ff8c00"
-                                      : "#1976d2",
-                                  textDecoration: "none",
-                                  fontWeight: "medium",
-                                  "&:hover": { textDecoration: "underline" },
-                                }}
-                              >
-                                {info.content}
-                              </Typography>
-                            ) : (
-                              <Typography
-                                variant="body1"
-                                sx={{ fontWeight: "medium" }}
-                              >
-                                {info.content}
-                              </Typography>
-                            )}
-                            <Typography variant="body2" color="text.secondary">
-                              {info.description}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </Box>
-                    ))}
-
-                    <Box>
+                <Stack spacing={3}>
+                  {contactInfo.map((info, index) => (
+                    <Box key={index}>
                       <Stack
                         direction="row"
                         spacing={2}
                         alignItems="flex-start"
                       >
-                        <Avatar sx={{ bgcolor: "#ff8c00", color: "white" }}>
-                          <Schedule />
+                        <Avatar
+                          sx={{
+                            bgcolor:
+                              info.color === "secondary"
+                                ? "#ff8c00"
+                                : "#1976d2",
+                            color: "white",
+                          }}
+                        >
+                          {info.icon}
                         </Avatar>
                         <Box>
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: "bold" }}
                           >
-                            Business Hours
+                            {info.title}
                           </Typography>
-                          <Typography
-                            variant="body1"
-                            sx={{ fontWeight: "medium" }}
-                          >
-                            Mon-Fri: 8AM-6PM
-                          </Typography>
+                          {info.href ? (
+                            <Typography
+                              component="a"
+                              href={info.href}
+                              variant="body1"
+                              sx={{
+                                color:
+                                  info.color === "secondary"
+                                    ? "#ff8c00"
+                                    : "#1976d2",
+                                textDecoration: "none",
+                                fontWeight: "medium",
+                                "&:hover": { textDecoration: "underline" },
+                              }}
+                            >
+                              {info.content}
+                            </Typography>
+                          ) : (
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: "medium" }}
+                            >
+                              {info.content}
+                            </Typography>
+                          )}
                           <Typography variant="body2" color="text.secondary">
-                            Emergency support available 24/7
+                            {info.description}
                           </Typography>
                         </Box>
                       </Stack>
                     </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
+                  ))}
 
-              {/* Professional Google Maps Location */}
-              <Card elevation={2}>
-                <CardContent sx={{ p: 0 }}>
-                  <Box sx={{ p: 3, pb: 2 }}>
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ mb: 2 }}
-                    >
-                      <MyLocation sx={{ color: "#ff8c00" }} />
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Find Us Here
-                      </Typography>
-                    </Stack>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 2 }}
-                    >
-                      Click the map for instant GPS navigation to our location
-                    </Typography>
-                  </Box>
-
-                  {/* Enhanced Map Container */}
-                  <Box
-                    sx={{
-                      position: "relative",
-                      width: "100%",
-                      height: 350,
-                      borderRadius: "0 0 16px 16px",
-                      overflow: "hidden",
-                      border: "3px solid #e0e0e0",
-                      boxShadow: "inset 0 2px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    {!mapError ? (
-                      <iframe
-                        src={mapEmbedUrl}
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0 }}
-                        allowFullScreen=""
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title={`${BUSINESS_NAME} Location - Waterford, Ireland`}
-                        onError={handleMapError}
-                      />
-                    ) : (
-                      <Box
-                        sx={{
-                          height: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          bgcolor: "grey.100",
-                          flexDirection: "column",
-                          p: 3,
-                        }}
-                      >
-                        <LocationOn
-                          sx={{ fontSize: 48, color: "grey.400", mb: 1 }}
-                        />
+                  <Box>
+                    <Stack direction="row" spacing={2} alignItems="flex-start">
+                      <Avatar sx={{ bgcolor: "#ff8c00", color: "white" }}>
+                        <Schedule />
+                      </Avatar>
+                      <Box>
                         <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          textAlign="center"
+                          variant="subtitle1"
+                          sx={{ fontWeight: "bold" }}
                         >
-                          Map temporarily unavailable
-                          <br />
-                          Use the buttons below for directions
+                          Business Hours
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ fontWeight: "medium" }}
+                        >
+                          Mon-Fri: 8AM-6PM
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Emergency support available 24/7
                         </Typography>
                       </Box>
-                    )}
-                  </Box>
-
-                  {/* Enhanced Action Buttons */}
-                  <Box sx={{ p: 3, pt: 2 }}>
-                    <Stack spacing={2}>
-                      <Stack direction="row" spacing={2}>
-                        <Button
-                          component="a"
-                          href={directionsUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="contained"
-                          size="medium"
-                          startIcon={<Directions />}
-                          sx={{
-                            flex: 1,
-                            bgcolor: "#1976d2",
-                            "&:hover": { bgcolor: "#115293" },
-                          }}
-                        >
-                          Get Directions
-                        </Button>
-                        <Button
-                          component="a"
-                          href={mapsUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          variant="outlined"
-                          size="medium"
-                          startIcon={<Navigation />}
-                          sx={{
-                            flex: 1,
-                            borderColor: "#ff8c00",
-                            color: "#ff8c00",
-                            "&:hover": {
-                              bgcolor: "rgba(255, 140, 0, 0.04)",
-                              borderColor: "#e67c00",
-                            },
-                          }}
-                        >
-                          Open Maps
-                        </Button>
-                      </Stack>
-
-                      {/* Coordinates Display */}
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          p: 2,
-                          bgcolor: "grey.50",
-                          textAlign: "center",
-                        }}
-                      >
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ display: "block", mb: 0.5 }}
-                        >
-                          📍 {BUSINESS_ADDRESS}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ fontFamily: "monospace" }}
-                        >
-                          GPS: {BUSINESS_LAT}, {BUSINESS_LNG}
-                        </Typography>
-                      </Paper>
                     </Stack>
                   </Box>
-                </CardContent>
-              </Card>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
 
-              {/* Why Choose Us */}
-              <Card
-                elevation={2}
-                sx={{ bgcolor: "primary.50", border: "1px solid #1976d2" }}
-              >
-                <CardContent sx={{ p: 4 }}>
+          {/* Map */}
+          <Grid item xs={12} md={6}>
+            <Card elevation={2}>
+              <CardContent sx={{ p: 0 }}>
+                <Box sx={{ p: 3, pb: 2 }}>
                   <Stack
                     direction="row"
                     spacing={1}
                     alignItems="center"
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 2 }}
                   >
-                    <Star sx={{ color: "#ff8c00" }} />
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      Why Choose Virgil Power?
-                    </Typography>
-                  </Stack>
-
-                  <Stack spacing={2}>
-                    {benefits.map((benefit, index) => (
-                      <Stack
-                        key={index}
-                        direction="row"
-                        spacing={1}
-                        alignItems="center"
-                      >
-                        <CheckCircle sx={{ color: "#ff8c00", fontSize: 20 }} />
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: "medium" }}
-                        >
-                          {benefit}
-                        </Typography>
-                      </Stack>
-                    ))}
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Stack>
-          </Grid>
-
-          {/* Right Column - Contact Form */}
-          <Grid item xs={12} lg={8}>
-            <Card elevation={2}>
-              <CardContent sx={{ p: 4 }}>
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  alignItems="center"
-                  sx={{ mb: 4 }}
-                >
-                  <Send color="primary" />
-                  <Box>
+                    <MyLocation sx={{ color: "#ff8c00" }} />
                     <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                      Send us a Message
+                      Find Us Here
                     </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      Get a free quote or ask any questions
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                {showSuccess && (
-                  <Alert
-                    severity="success"
-                    sx={{
-                      mb: 3,
-                      "& .MuiAlert-icon": { color: "#ff8c00" },
-                      bgcolor: "rgba(255, 140, 0, 0.1)",
-                      border: "1px solid #ff8c00",
-                    }}
+                  </Stack>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
                   >
-                    Thank you for your message! We'll get back to you within 2
-                    hours.
-                  </Alert>
-                )}
+                    Click the map for instant GPS navigation to our location
+                  </Typography>
+                </Box>
 
-                <form onSubmit={handleSubmit}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Your Name"
-                        variant="outlined"
-                        fullWidth
-                        required
-                        value={formData.name}
-                        onChange={handleInputChange("name")}
+                {/* Map Container */}
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: 350,
+                    borderRadius: "0 0 16px 16px",
+                    overflow: "hidden",
+                    border: "3px solid #e0e0e0",
+                    boxShadow: "inset 0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {!mapError ? (
+                    <iframe
+                      src={mapEmbedUrl}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`${BUSINESS_NAME} Location - ${BUSINESS_ADDRESS}`}
+                      onError={handleMapError}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        bgcolor: "grey.100",
+                        flexDirection: "column",
+                        p: 3,
+                      }}
+                    >
+                      <LocationOn
+                        sx={{ fontSize: 48, color: "grey.400", mb: 1 }}
                       />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        label="Phone Number"
-                        variant="outlined"
-                        fullWidth
-                        required
-                        value={formData.phone}
-                        onChange={handleInputChange("phone")}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Email Address"
-                        type="email"
-                        variant="outlined"
-                        fullWidth
-                        required
-                        value={formData.email}
-                        onChange={handleInputChange("email")}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Service Needed"
-                        select
-                        variant="outlined"
-                        fullWidth
-                        value={formData.service}
-                        onChange={handleInputChange("service")}
-                        SelectProps={{ native: true }}
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        textAlign="center"
                       >
-                        <option value="">Select a service...</option>
-                        <option value="purchase">Forklift Purchase</option>
-                        <option value="rental">Forklift Rental/Hire</option>
-                        <option value="service">Service & Repair</option>
-                        <option value="general">General Inquiry</option>
-                      </TextField>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Message"
-                        multiline
-                        rows={5}
-                        variant="outlined"
-                        fullWidth
-                        required
-                        placeholder="Tell us about your forklift needs, timeline, or any specific requirements..."
-                        value={formData.message}
-                        onChange={handleInputChange("message")}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
+                        Map temporarily unavailable
+                        <br />
+                        Use the buttons below for directions
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Action Buttons */}
+                <Box sx={{ p: 3, pt: 2 }}>
+                  <Stack spacing={2}>
+                    <Stack direction="row" spacing={2}>
                       <Button
-                        type="submit"
+                        component="a"
+                        href={directionsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         variant="contained"
-                        size="large"
-                        startIcon={<Send />}
+                        size="medium"
+                        startIcon={<Directions />}
                         sx={{
-                          px: 4,
-                          py: 1.5,
+                          flex: 1,
                           bgcolor: "#1976d2",
                           "&:hover": { bgcolor: "#115293" },
                         }}
                       >
-                        Send Message
+                        Get Directions
                       </Button>
-                    </Grid>
-                  </Grid>
-                </form>
+                      <Button
+                        component="a"
+                        href={mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="outlined"
+                        size="medium"
+                        startIcon={<Navigation />}
+                        sx={{
+                          flex: 1,
+                          borderColor: "#ff8c00",
+                          color: "#ff8c00",
+                          "&:hover": {
+                            bgcolor: "rgba(255, 140, 0, 0.04)",
+                            borderColor: "#e67c00",
+                          },
+                        }}
+                      >
+                        Open Maps
+                      </Button>
+                    </Stack>
 
-                {/* Emergency Contact */}
-                <Alert
-                  severity="error"
-                  icon={<Emergency />}
-                  sx={{
-                    mt: 4,
-                    bgcolor: "#ff8c00",
-                    color: "white",
-                    "& .MuiAlert-icon": { color: "white" },
-                    border: "1px solid #e67c00",
-                  }}
-                  action={
-                    <Button
-                      component="a"
-                      href="tel:+353872501934"
-                      color="inherit"
-                      size="small"
+                    {/* Coordinates Display */}
+                    <Paper
                       variant="outlined"
                       sx={{
-                        color: "white",
-                        borderColor: "white",
-                        "&:hover": {
-                          bgcolor: "rgba(255,255,255,0.1)",
-                          borderColor: "white",
-                        },
+                        p: 2,
+                        bgcolor: "grey.50",
+                        textAlign: "center",
                       }}
                     >
-                      Call Now
-                    </Button>
-                  }
-                >
-                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-                    Emergency Breakdown Service
-                  </Typography>
-                  <Typography variant="body2">
-                    Forklift broken down and need immediate replacement? Call
-                    our emergency line: <strong>+353 87 250 1934</strong>
-                  </Typography>
-                </Alert>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: "block", mb: 0.5 }}
+                      >
+                        📍 {BUSINESS_ADDRESS}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontFamily: "monospace" }}
+                      >
+                        GPS: {BUSINESS_LAT}, {BUSINESS_LNG}
+                      </Typography>
+                    </Paper>
+                  </Stack>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
+
+        {/* Contact Form */}
+        <Card elevation={2}>
+          <CardContent sx={{ p: 4 }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              sx={{ mb: 4 }}
+            >
+              <Send color="primary" />
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  Send us a Message
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Get a free quote or ask any questions
+                </Typography>
+              </Box>
+            </Stack>
+
+            {showSuccess && (
+              <Alert
+                severity="success"
+                sx={{
+                  mb: 3,
+                  "& .MuiAlert-icon": { color: "#ff8c00" },
+                  bgcolor: "rgba(255, 140, 0, 0.1)",
+                  border: "1px solid #ff8c00",
+                }}
+              >
+                Thank you for your message! We'll get back to you within 2
+                hours.
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Your Name"
+                    variant="outlined"
+                    fullWidth
+                    required
+                    value={formData.name}
+                    onChange={handleInputChange("name")}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    label="Phone Number"
+                    variant="outlined"
+                    fullWidth
+                    required
+                    value={formData.phone}
+                    onChange={handleInputChange("phone")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Email Address"
+                    type="email"
+                    variant="outlined"
+                    fullWidth
+                    required
+                    value={formData.email}
+                    onChange={handleInputChange("email")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{ mb: 3 }}>
+                    <InputLabel id="service-label">Service</InputLabel>
+                    <Select
+                      labelId="service-label"
+                      id="service"
+                      value={formData.service}
+                      label="Service"
+                      onChange={handleInputChange("service")}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value="purchase">Forklift Purchase</MenuItem>
+                      <MenuItem value="rental">Forklift Rental/Hire</MenuItem>
+                      <MenuItem value="service">Service & Repair</MenuItem>
+                      <MenuItem value="general">General Inquiry</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Message"
+                    multiline
+                    rows={5}
+                    variant="outlined"
+                    fullWidth
+                    required
+                    placeholder="Tell us about your forklift needs, timeline, or any specific requirements..."
+                    value={formData.message}
+                    onChange={handleInputChange("message")}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    startIcon={<Send />}
+                    sx={{
+                      px: 4,
+                      py: 1.5,
+                      bgcolor: "#1976d2",
+                      "&:hover": { bgcolor: "#115293" },
+                    }}
+                  >
+                    Send Message
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+
+            {/* Emergency Contact */}
+            <Alert
+              severity="error"
+              icon={<Emergency />}
+              sx={{
+                mt: 4,
+                bgcolor: "#ff8c00",
+                color: "white",
+                "& .MuiAlert-icon": { color: "white" },
+                border: "1px solid #e67c00",
+              }}
+              action={
+                <Button
+                  component="a"
+                  href="tel:+353872501934"
+                  color="inherit"
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    color: "white",
+                    borderColor: "white",
+                    "&:hover": {
+                      bgcolor: "rgba(255,255,255,0.1)",
+                      borderColor: "white",
+                    },
+                  }}
+                >
+                  Call Now
+                </Button>
+              }
+            >
+              <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                Emergency Breakdown Service
+              </Typography>
+              <Typography variant="body2">
+                Forklift broken down and need immediate replacement? Call our
+                emergency line: <strong>+353 87 250 1934</strong>
+              </Typography>
+            </Alert>
+          </CardContent>
+        </Card>
       </Container>
     </Box>
   );
