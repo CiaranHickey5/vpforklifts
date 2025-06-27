@@ -1,113 +1,98 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialForklifts } from '../data/initialData';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { initialForklifts } from "../data/initialData";
 
 const AppContext = createContext();
 
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useApp must be used within AppProvider');
+    throw new Error("useApp must be used within AppProvider");
   }
   return context;
 };
 
 export const AppProvider = ({ children }) => {
   // Navigation state
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   // Product state
   const [forklifts, setForklifts] = useState(initialForklifts);
   const [selectedForklift, setSelectedForklift] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedBrand, setSelectedBrand] = useState('all');
-  const [sortBy, setSortBy] = useState('default');
-  const [viewMode, setViewMode] = useState('grid');
-  const [showPerPage, setShowPerPage] = useState(12);
-  const [currentPageNum, setCurrentPageNum] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Authentication state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check if user was previously authenticated (optional persistence)
+    return localStorage.getItem("virgil_admin_auth") === "true";
+  });
   const [showLoginModal, setShowLoginModal] = useState(false);
-  
+
   // Edit/Create state
   const [isEditing, setIsEditing] = useState(false);
   const [editingForklift, setEditingForklift] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
+  // Loading and error states
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Auto-scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [currentPage, currentPageNum]);
+  }, [currentPage]);
+
+  // Persist authentication state
+  useEffect(() => {
+    localStorage.setItem("virgil_admin_auth", isAuthenticated.toString());
+  }, [isAuthenticated]);
 
   // Navigation functions
-  const navigateTo = (page) => {
+  const navigateTo = useCallback((page) => {
     setCurrentPage(page);
     setIsMenuOpen(false);
     setSelectedForklift(null);
-    setSelectedCategory('all');
-    setSelectedBrand('all');
-    setCurrentPageNum(1);
-    setSearchQuery('');
-  };
+    setError(null);
+  }, []);
 
   // Authentication functions
-  const handleLogin = (username, password) => {
-    if (username === 'admin' && password === 'Virgil1973') {
-      setIsAuthenticated(true);
-      setShowLoginModal(false);
-    } else {
-      alert('Invalid credentials. Please try again.');
-    }
-  };
+  const handleLogin = useCallback((username, password) => {
+    setLoading(true);
+    setError(null);
 
-  const handleLogout = () => {
+    // Simulate API call delay
+    setTimeout(() => {
+      if (username === "admin" && password === "Virgil1973") {
+        setIsAuthenticated(true);
+        setShowLoginModal(false);
+        setError(null);
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
-    setCurrentPage('home');
-  };
+    setCurrentPage("home");
+    setEditingForklift(null);
+    setIsEditing(false);
+    localStorage.removeItem("virgil_admin_auth");
+  }, []);
 
-  // Filter and sort functions
-  const filterAndSortForklifts = () => {
-    let filtered = [...forklifts];
-
-    if (searchQuery) {
-      filtered = filtered.filter(f => 
-        f.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        f.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        f.sku.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(f => f.category === selectedCategory);
-    }
-
-    if (selectedBrand !== 'all') {
-      filtered = filtered.filter(f => f.brand === selectedBrand);
-    }
-
-    switch (sortBy) {
-      case 'name':
-        filtered.sort((a, b) => a.model.localeCompare(b.model));
-        break;
-      case 'price':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      default:
-        break;
-    }
-
-    return filtered;
-  };
-
-  // CRUD Functions
-  const handleCreateForklift = () => {
+  // CRUD Functions with error handling
+  const handleCreateForklift = useCallback(() => {
+    const maxId =
+      forklifts.length > 0 ? Math.max(...forklifts.map((f) => f.id)) : 0;
     const newForklift = {
-      id: Math.max(...forklifts.map(f => f.id)) + 1,
+      id: maxId + 1,
       sku: "",
       brand: "Toyota",
       model: "",
@@ -120,45 +105,110 @@ export const AppProvider = ({ children }) => {
       hirePrice: "€0/week",
       status: "In Stock",
       featured: false,
-      image: "https://images.unsplash.com/photo-1581092160607-ee22df5ddc37?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1581092160607-ee22df5ddc37?w=600&h=400&fit=crop",
       features: [],
       description: "",
-      specs: {}
+      specs: {},
     };
     setEditingForklift(newForklift);
     setIsEditing(true);
-    setCurrentPage('admin-edit');
-  };
+    setCurrentPage("admin-edit");
+  }, [forklifts]);
 
-  const handleDeleteForklift = (id) => {
-    setForklifts(forklifts.filter(f => f.id !== id));
-    setShowDeleteConfirm(false);
-    setDeleteId(null);
-  };
+  const handleDeleteForklift = useCallback(
+    (id) => {
+      try {
+        setForklifts((prevForklifts) =>
+          prevForklifts.filter((f) => f.id !== id)
+        );
+        setShowDeleteConfirm(false);
+        setDeleteId(null);
 
-  const handleSaveForklift = (forkliftData) => {
-    const formattedPrice = `€${forkliftData.price.toLocaleString()}`;
-    const updatedForklift = {
-      ...forkliftData,
-      priceFormatted: formattedPrice
+        // If the deleted forklift was currently selected, clear selection
+        if (selectedForklift?.id === id) {
+          setSelectedForklift(null);
+        }
+      } catch (err) {
+        setError("Failed to delete forklift");
+        console.error("Delete error:", err);
+      }
+    },
+    [selectedForklift]
+  );
+
+  const handleSaveForklift = useCallback(
+    (forkliftData) => {
+      try {
+        setLoading(true);
+
+        // Validate required fields
+        if (!forkliftData.model || !forkliftData.sku || !forkliftData.price) {
+          throw new Error("Please fill in all required fields");
+        }
+
+        const formattedPrice = `€${forkliftData.price.toLocaleString()}`;
+        const updatedForklift = {
+          ...forkliftData,
+          priceFormatted: formattedPrice,
+          // Ensure features is an array
+          features: Array.isArray(forkliftData.features)
+            ? forkliftData.features
+            : [],
+          // Ensure specs is an object
+          specs:
+            typeof forkliftData.specs === "object" ? forkliftData.specs : {},
+        };
+
+        // Check if editing existing or creating new
+        const existingIndex = forklifts.findIndex(
+          (f) => f.id === forkliftData.id
+        );
+
+        if (existingIndex !== -1) {
+          // Update existing
+          setForklifts((prevForklifts) =>
+            prevForklifts.map((f) =>
+              f.id === forkliftData.id ? updatedForklift : f
+            )
+          );
+        } else {
+          // Add new
+          setForklifts((prevForklifts) => [...prevForklifts, updatedForklift]);
+        }
+
+        setIsEditing(false);
+        setEditingForklift(null);
+        setCurrentPage("admin");
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error("Save error:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [forklifts]
+  );
+
+  // Clear error function
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  // Close menu when clicking outside (for mobile)
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (isMenuOpen) {
+        setIsMenuOpen(false);
+      }
     };
 
-    if (forkliftData.id && forklifts.find(f => f.id === forkliftData.id)) {
-      setForklifts(forklifts.map(f => f.id === forkliftData.id ? updatedForklift : f));
-    } else {
-      setForklifts([...forklifts, updatedForklift]);
+    if (isMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
-    
-    setIsEditing(false);
-    setEditingForklift(null);
-    setCurrentPage('admin');
-  };
-
-  // Pagination
-  const filteredForklifts = filterAndSortForklifts();
-  const totalPages = Math.ceil(filteredForklifts.length / showPerPage);
-  const startIdx = (currentPageNum - 1) * showPerPage;
-  const paginatedForklifts = filteredForklifts.slice(startIdx, startIdx + showPerPage);
+  }, [isMenuOpen]);
 
   const value = {
     // State
@@ -166,42 +216,25 @@ export const AppProvider = ({ children }) => {
     isMenuOpen,
     forklifts,
     selectedForklift,
-    selectedCategory,
-    selectedBrand,
-    sortBy,
-    viewMode,
-    showPerPage,
-    currentPageNum,
-    searchQuery,
     isAuthenticated,
     showLoginModal,
     isEditing,
     editingForklift,
     showDeleteConfirm,
     deleteId,
-    filteredForklifts,
-    paginatedForklifts,
-    totalPages,
-    
+    loading,
+    error,
+
     // Setters
     setCurrentPage,
     setIsMenuOpen,
-    setForklifts,
     setSelectedForklift,
-    setSelectedCategory,
-    setSelectedBrand,
-    setSortBy,
-    setViewMode,
-    setShowPerPage,
-    setCurrentPageNum,
-    setSearchQuery,
-    setIsAuthenticated,
     setShowLoginModal,
     setIsEditing,
     setEditingForklift,
     setShowDeleteConfirm,
     setDeleteId,
-    
+
     // Functions
     navigateTo,
     handleLogin,
@@ -209,12 +242,8 @@ export const AppProvider = ({ children }) => {
     handleCreateForklift,
     handleDeleteForklift,
     handleSaveForklift,
-    filterAndSortForklifts
+    clearError,
   };
 
-  return (
-    <AppContext.Provider value={value}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
