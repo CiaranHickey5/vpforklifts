@@ -21,6 +21,7 @@ import {
   Build,
   LocalShipping,
   Security,
+  Emergency,
 } from "@mui/icons-material";
 
 const Footer = () => {
@@ -258,45 +259,134 @@ const Footer = () => {
 
       <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
 
-      {/* Emergency CTA Strip */}
-      <Box sx={{ bgcolor: "rgba(255, 140, 0, 0.1)", py: 3 }}>
-        <Container maxWidth="lg">
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
+      {/* FIXED: Professional Emergency CTA Strip */}
+      <Box
+        sx={{
+          background: "linear-gradient(135deg, #1976d2 0%, #ff8c00 100%)",
+          py: 4,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Background Pattern */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: -20,
+            right: -20,
+            width: 100,
+            height: 100,
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.1)",
+            filter: "blur(40px)",
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: -30,
+            left: -30,
+            width: 120,
+            height: 120,
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.05)",
+            filter: "blur(50px)",
+          }}
+        />
+
+        <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              bgcolor: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: 3,
+              p: 4,
+              color: "white",
+            }}
           >
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: "bold", color: "#ff8c00", mb: 0.5 }}
-              >
-                Emergency Breakdown Service
-              </Typography>
-              <Typography variant="body2" sx={{ color: "grey.300" }}>
-                Forklift broken down? We provide immediate replacement forklifts
-                to keep your business running.
-              </Typography>
-            </Box>
-            <Button
-              href="tel:+353872501934"
-              variant="contained"
-              size="large"
-              startIcon={<Phone />}
-              sx={{
-                bgcolor: "#ff8c00",
-                color: "white",
-                px: 4,
-                whiteSpace: "nowrap",
-                "&:hover": {
-                  bgcolor: "#e67c00",
-                },
-              }}
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={3}
             >
-              Emergency Call: +353 87 250 1934
-            </Button>
-          </Stack>
+              <Stack direction="row" spacing={3} alignItems="center">
+                <Avatar
+                  sx={{
+                    bgcolor: "rgba(255, 255, 255, 0.2)",
+                    color: "white",
+                    width: 64,
+                    height: 64,
+                  }}
+                >
+                  <Emergency sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Box>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: "bold",
+                      color: "white",
+                      mb: 1,
+                      textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                    }}
+                  >
+                    Emergency Breakdown Service
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: "rgba(255, 255, 255, 0.9)",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    Forklift broken down? We provide immediate replacement
+                    forklifts to keep your business running.
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Stack spacing={2} alignItems={{ xs: "stretch", md: "flex-end" }}>
+                <Button
+                  href="tel:+353872501934"
+                  variant="contained"
+                  size="large"
+                  startIcon={<Phone />}
+                  sx={{
+                    bgcolor: "white",
+                    color: "#1976d2",
+                    px: 4,
+                    py: 2,
+                    fontSize: "1.1rem",
+                    fontWeight: "bold",
+                    whiteSpace: "nowrap",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+                    "&:hover": {
+                      bgcolor: "#f5f5f5",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 6px 25px rgba(0, 0, 0, 0.3)",
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  Emergency Call
+                </Button>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: "white",
+                    fontWeight: "bold",
+                    textAlign: { xs: "center", md: "right" },
+                    textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  +353 87 250 1934
+                </Typography>
+              </Stack>
+            </Stack>
+          </Paper>
         </Container>
       </Box>
 

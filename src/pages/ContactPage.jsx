@@ -80,14 +80,14 @@ const ContactPage = () => {
       content: "sales@virgilpowerforklifts.com",
       href: "mailto:sales@virgilpowerforklifts.com",
       description: "Sales & general inquiries",
-      color: "info",
+      color: "primary",
     },
     {
       icon: <LocationOn />,
       title: "Location",
       content: "Waterford, Ireland",
       description: "Serving all of Ireland",
-      color: "success",
+      color: "secondary",
     },
   ];
 
@@ -121,7 +121,7 @@ const ContactPage = () => {
         <Paper
           elevation={3}
           sx={{
-            background: "linear-gradient(135deg, #1976d2 0%, #2e7d32 100%)",
+            background: "linear-gradient(135deg, #1976d2 0%, #ff8c00 100%)",
             color: "white",
             p: 4,
             mb: 6,
@@ -132,13 +132,17 @@ const ContactPage = () => {
             <Grid item xs={12} md={4}>
               <Card
                 sx={{
-                  bgcolor: "rgba(255,255,255,0.1)",
+                  bgcolor: "rgba(255,255,255,0.15)",
                   backdropFilter: "blur(10px)",
                   color: "white",
                   textAlign: "center",
                   cursor: "pointer",
                   transition: "transform 0.3s ease",
-                  "&:hover": { transform: "translateY(-4px)" },
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    bgcolor: "rgba(255,255,255,0.2)",
+                  },
                 }}
                 component="a"
                 href="tel:+35351293208"
@@ -161,13 +165,17 @@ const ContactPage = () => {
             <Grid item xs={12} md={4}>
               <Card
                 sx={{
-                  bgcolor: "rgba(255,255,255,0.1)",
+                  bgcolor: "rgba(255,255,255,0.15)",
                   backdropFilter: "blur(10px)",
                   color: "white",
                   textAlign: "center",
                   cursor: "pointer",
                   transition: "transform 0.3s ease",
-                  "&:hover": { transform: "translateY(-4px)" },
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    bgcolor: "rgba(255,255,255,0.2)",
+                  },
                 }}
                 component="a"
                 href="mailto:sales@virgilpowerforklifts.com"
@@ -190,10 +198,11 @@ const ContactPage = () => {
             <Grid item xs={12} md={4}>
               <Card
                 sx={{
-                  bgcolor: "rgba(255,255,255,0.1)",
+                  bgcolor: "rgba(255,255,255,0.15)",
                   backdropFilter: "blur(10px)",
                   color: "white",
                   textAlign: "center",
+                  border: "1px solid rgba(255,255,255,0.2)",
                 }}
               >
                 <CardContent>
@@ -232,7 +241,15 @@ const ContactPage = () => {
                           spacing={2}
                           alignItems="flex-start"
                         >
-                          <Avatar sx={{ bgcolor: `${info.color}.main` }}>
+                          <Avatar
+                            sx={{
+                              bgcolor:
+                                info.color === "secondary"
+                                  ? "#ff8c00"
+                                  : "#1976d2",
+                              color: "white",
+                            }}
+                          >
                             {info.icon}
                           </Avatar>
                           <Box>
@@ -248,7 +265,10 @@ const ContactPage = () => {
                                 href={info.href}
                                 variant="body1"
                                 sx={{
-                                  color: `${info.color}.main`,
+                                  color:
+                                    info.color === "secondary"
+                                      ? "#ff8c00"
+                                      : "#1976d2",
                                   textDecoration: "none",
                                   fontWeight: "medium",
                                   "&:hover": { textDecoration: "underline" },
@@ -278,7 +298,7 @@ const ContactPage = () => {
                         spacing={2}
                         alignItems="flex-start"
                       >
-                        <Avatar sx={{ bgcolor: "warning.main" }}>
+                        <Avatar sx={{ bgcolor: "#ff8c00", color: "white" }}>
                           <Schedule />
                         </Avatar>
                         <Box>
@@ -304,8 +324,11 @@ const ContactPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Why Choose Us */}
-              <Card elevation={2} sx={{ bgcolor: "success.50" }}>
+              {/* Why Choose Us - FIXED: Updated background color */}
+              <Card
+                elevation={2}
+                sx={{ bgcolor: "primary.50", border: "1px solid #1976d2" }}
+              >
                 <CardContent sx={{ p: 4 }}>
                   <Stack
                     direction="row"
@@ -313,7 +336,7 @@ const ContactPage = () => {
                     alignItems="center"
                     sx={{ mb: 3 }}
                   >
-                    <Star sx={{ color: "warning.main" }} />
+                    <Star sx={{ color: "#ff8c00" }} />
                     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                       Why Choose Virgil Power?
                     </Typography>
@@ -327,9 +350,7 @@ const ContactPage = () => {
                         spacing={1}
                         alignItems="center"
                       >
-                        <CheckCircle
-                          sx={{ color: "success.main", fontSize: 20 }}
-                        />
+                        <CheckCircle sx={{ color: "#ff8c00", fontSize: 20 }} />
                         <Typography
                           variant="body2"
                           sx={{ fontWeight: "medium" }}
@@ -366,7 +387,15 @@ const ContactPage = () => {
                 </Stack>
 
                 {showSuccess && (
-                  <Alert severity="success" sx={{ mb: 3 }}>
+                  <Alert
+                    severity="success"
+                    sx={{
+                      mb: 3,
+                      "& .MuiAlert-icon": { color: "#ff8c00" },
+                      bgcolor: "rgba(255, 140, 0, 0.1)",
+                      border: "1px solid #ff8c00",
+                    }}
+                  >
                     Thank you for your message! We'll get back to you within 2
                     hours.
                   </Alert>
@@ -441,7 +470,12 @@ const ContactPage = () => {
                         variant="contained"
                         size="large"
                         startIcon={<Send />}
-                        sx={{ px: 4, py: 1.5 }}
+                        sx={{
+                          px: 4,
+                          py: 1.5,
+                          bgcolor: "#1976d2",
+                          "&:hover": { bgcolor: "#115293" },
+                        }}
                       >
                         Send Message
                       </Button>
@@ -449,11 +483,17 @@ const ContactPage = () => {
                   </Grid>
                 </form>
 
-                {/* Emergency Contact */}
+                {/* Emergency Contact - FIXED: Updated styling */}
                 <Alert
                   severity="error"
                   icon={<Emergency />}
-                  sx={{ mt: 4 }}
+                  sx={{
+                    mt: 4,
+                    bgcolor: "#ff8c00",
+                    color: "white",
+                    "& .MuiAlert-icon": { color: "white" },
+                    border: "1px solid #e67c00",
+                  }}
                   action={
                     <Button
                       component="a"
@@ -461,6 +501,14 @@ const ContactPage = () => {
                       color="inherit"
                       size="small"
                       variant="outlined"
+                      sx={{
+                        color: "white",
+                        borderColor: "white",
+                        "&:hover": {
+                          bgcolor: "rgba(255,255,255,0.1)",
+                          borderColor: "white",
+                        },
+                      }}
                     >
                       Call Now
                     </Button>
