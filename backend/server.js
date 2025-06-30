@@ -71,8 +71,8 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/forklifts", forkliftRoutes);
 
-// 404 handler for API routes
-app.use("/api/*", (req, res) => {
+// 404 handler for API routes - FIXED: Removed the problematic "/*" pattern
+app.use("/api", (req, res) => {
   res.status(404).json({
     success: false,
     message: "API endpoint not found",
