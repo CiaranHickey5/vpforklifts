@@ -41,7 +41,12 @@ const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
       ? [process.env.FRONTEND_URL, "https://virgilpowerforklifts.com"]
-      : ["http://localhost:3000", "http://localhost:5173"],
+      : [
+          "http://localhost:3000",
+          "http://localhost:5173",
+          "http://192.168.1.101:5173", // Add your IP address
+          "http://127.0.0.1:5173", // Add this as backup
+        ],
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
