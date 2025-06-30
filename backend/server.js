@@ -43,6 +43,7 @@ const corsOptions = {
       ? [
           process.env.FRONTEND_URL,
           "https://virgilpowerforklifts.netlify.app", // Your actual Netlify URL
+          "https://your-custom-domain.com", // If you have a custom domain
         ]
       : [
           "http://localhost:3000",
@@ -90,11 +91,19 @@ app.use("/api", (req, res) => {
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
-  const path = require("path");
-  app.use(express.static(path.join(__dirname, "build")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
+  // For API-only backend, we don't serve static files
+  // Frontend is served separately by Netlify
+  app.get("/", (req, res) => {
+    res.json({
+      message: "Virgil Power Forklifts API",
+      status: "Running",
+      version: "1.0.0",
+      endpoints: {
+        health: "/api/health",
+        auth: "/api/auth",
+        forklifts: "/api/forklifts",
+      },
+    });
   });
 }
 
@@ -104,10 +113,7 @@ app.use(errorHandler);
 // Database connection
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
