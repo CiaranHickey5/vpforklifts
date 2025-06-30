@@ -43,7 +43,6 @@ const corsOptions = {
       ? [
           process.env.FRONTEND_URL,
           "https://virgilpowerforklifts.netlify.app", // Your actual Netlify URL
-          "https://your-custom-domain.com", // If you have a custom domain
         ]
       : [
           "http://localhost:3000",
