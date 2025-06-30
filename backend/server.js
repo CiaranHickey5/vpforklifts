@@ -40,11 +40,7 @@ const authLimiter = rateLimit({
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? [
-          process.env.FRONTEND_URL,
-          "https://virgilpowerforklifts.netlify.app", // Your actual Netlify URL
-          "https://your-custom-domain.com", // If you have a custom domain
-        ]
+      ? [process.env.FRONTEND_URL, "https://virgilpowerforklifts.netlify.app"]
       : [
           "http://localhost:3000",
           "http://localhost:5173",
