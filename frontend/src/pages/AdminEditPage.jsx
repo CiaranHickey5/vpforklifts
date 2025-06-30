@@ -33,6 +33,8 @@ import {
   Info,
 } from "@mui/icons-material";
 import { useApp } from "../context/AppContext";
+import ImageUpload from "../components/common/ImageUpload";
+import { uploadAPI } from "../services/api";
 
 const AdminEditPage = () => {
   const {
@@ -51,6 +53,7 @@ const AdminEditPage = () => {
   const [newFeature, setNewFeature] = useState("");
   const [newSpecKey, setNewSpecKey] = useState("");
   const [newSpecValue, setNewSpecValue] = useState("");
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
     if (editingForklift) {
@@ -100,6 +103,10 @@ const AdminEditPage = () => {
       errors.description = "Description is required";
     }
 
+    if (!localForklift.image?.trim()) {
+      errors.image = "Image is required";
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -116,6 +123,51 @@ const AdminEditPage = () => {
         ...prev,
         [field]: undefined,
       }));
+    }
+  };
+
+  const handleImageChange = async (imageData) => {
+    setImageUploading(true);
+
+    try {
+      // Production option: Upload to server
+      if (imageData instanceof File) {
+        // Upload file to server and get back the URL
+        const result = await uploadAPI.uploadImage(imageData);
+        setLocalForklift((prev) => ({ ...prev, image: result.data.imageUrl }));
+      } else if (
+        typeof imageData === "string" &&
+        imageData.startsWith("data:")
+      ) {
+        // Convert base64 to file and upload
+        const response = await fetch(imageData);
+        const blob = await response.blob();
+        const file = new File([blob], "forklift-image.jpg", {
+          type: blob.type,
+        });
+
+        const result = await uploadAPI.uploadImage(file);
+        setLocalForklift((prev) => ({ ...prev, image: result.data.imageUrl }));
+      } else if (typeof imageData === "string") {
+        // Direct URL (already uploaded or external)
+        setLocalForklift((prev) => ({ ...prev, image: imageData }));
+      }
+
+      // Clear any existing image validation error
+      if (validationErrors.image) {
+        setValidationErrors((prev) => ({
+          ...prev,
+          image: undefined,
+        }));
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      setValidationErrors((prev) => ({
+        ...prev,
+        image: "Failed to upload image. Please try again.",
+      }));
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -390,23 +442,43 @@ const AdminEditPage = () => {
                     />
                   </Grid>
 
+                  {/* Image Upload Section */}
                   <Grid item xs={12}>
-                    <TextField
-                      label="Image URL"
-                      fullWidth
+                    <Box sx={{ mb: 2 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ mb: 1, fontWeight: "medium" }}
+                      >
+                        Forklift Image *
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 2 }}
+                      >
+                        Upload a high-quality image of the forklift
+                      </Typography>
+                    </Box>
+
+                    <ImageUpload
                       value={localForklift.image || ""}
-                      onChange={(e) =>
-                        handleInputChange("image", e.target.value)
-                      }
-                      placeholder="https://example.com/image.jpg"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <ImageIcon />
-                          </InputAdornment>
-                        ),
-                      }}
+                      onChange={handleImageChange}
+                      label="Forklift Image"
+                      error={!!validationErrors.image}
+                      helperText={validationErrors.image}
+                      disabled={imageUploading}
                     />
+
+                    {imageUploading && (
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", mt: 2 }}
+                      >
+                        <CircularProgress size={20} sx={{ mr: 1 }} />
+                        <Typography variant="body2" color="text.secondary">
+                          Uploading image...
+                        </Typography>
+                      </Box>
+                    )}
                   </Grid>
                 </Grid>
               </CardContent>
@@ -568,7 +640,7 @@ const AdminEditPage = () => {
                     startIcon={
                       loading ? <CircularProgress size={20} /> : <Save />
                     }
-                    disabled={loading}
+                    disabled={loading || imageUploading}
                     fullWidth
                   >
                     {loading ? "Saving..." : "Save Forklift"}
@@ -579,7 +651,7 @@ const AdminEditPage = () => {
                     variant="outlined"
                     size="large"
                     fullWidth
-                    disabled={loading}
+                    disabled={loading || imageUploading}
                   >
                     Cancel
                   </Button>
@@ -607,7 +679,7 @@ const AdminEditPage = () => {
                   <br />
                   • Include all relevant features
                   <br />
-                  • Ensure image URLs are accessible
+                  • Upload high-quality images (JPG, PNG)
                   <br />• Set competitive pricing
                 </Typography>
               </CardContent>

@@ -2,10 +2,8 @@ import axios from "axios";
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "https://virgil-power-forklifts-api.onrender.com/api",
-  timeout: 60000,
+  baseURL: "https://virgil-power-forklifts-api.onrender.com/api", // Always use production API
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -292,5 +290,24 @@ const initializeAuth = () => {
 // Call on module load
 initializeAuth();
 
-// Export the configured axios instance for direct use if needed
-export default api;
+// Upload API methods
+export const uploadAPI = {
+  // Upload image file
+  uploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await api.post("/upload/image", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // Delete uploaded image
+  deleteImage: async (filename) => {
+    const response = await api.delete(`/upload/image/${filename}`);
+    return response.data;
+  },
+};

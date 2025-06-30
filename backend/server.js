@@ -43,7 +43,11 @@ const authLimiter = rateLimit({
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? [process.env.FRONTEND_URL, "https://virgilpowerforklifts.netlify.app"]
+      ? [
+          process.env.FRONTEND_URL,
+          "https://virgilpowerforklifts.netlify.app", // Your actual Netlify URL
+          "https://your-custom-domain.com", // If you have a custom domain
+        ]
       : [
           "http://localhost:3000",
           "http://localhost:5173",
@@ -78,6 +82,10 @@ app.get("/api/health", (req, res) => {
 // API routes
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/forklifts", forkliftRoutes);
+app.use("/api/upload", require("./routes/upload")); // Add upload routes
+
+// Serve static uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // 404 handler for API routes - FIXED: Removed the problematic "/*" pattern
 app.use("/api", (req, res) => {
