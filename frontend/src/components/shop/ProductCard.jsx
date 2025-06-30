@@ -261,7 +261,7 @@ const ProductCard = ({ forklift }) => {
                 startIcon={<Delete />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setDeleteId(forklift.id);
+                  setDeleteId(forklift._id);
                   setShowDeleteConfirm(true);
                 }}
                 sx={{ flex: 1 }}
