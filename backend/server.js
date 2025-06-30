@@ -40,12 +40,16 @@ const authLimiter = rateLimit({
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? [process.env.FRONTEND_URL, "https://virgilpowerforklifts.com"]
+      ? [
+          process.env.FRONTEND_URL,
+          "https://virgilpowerforklifts.netlify.app", // Your actual Netlify URL
+          "https://your-custom-domain.com", // If you have a custom domain
+        ]
       : [
           "http://localhost:3000",
           "http://localhost:5173",
-          "http://192.168.1.101:5173", // Add your IP address
-          "http://127.0.0.1:5173", // Add this as backup
+          "http://192.168.1.101:5173",
+          "http://127.0.0.1:5173",
         ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -133,7 +137,7 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 const server = app.listen(PORT, () => {
   console.log(
