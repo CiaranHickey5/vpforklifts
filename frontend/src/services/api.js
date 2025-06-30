@@ -2,7 +2,9 @@ import axios from "axios";
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Fixed: Force localhost for development
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "https://virgil-power-forklifts-api.onrender.com/api",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
