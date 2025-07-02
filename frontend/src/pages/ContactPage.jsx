@@ -310,6 +310,16 @@ const ContactPage = () => {
                       label="Service"
                       onChange={handleInputChange("service")}
                       displayEmpty
+                      renderValue={(selected) => {
+                        if (!selected) {
+                          return (
+                            <span style={{ color: "#888" }}>
+                              Choose a service...
+                            </span>
+                          );
+                        }
+                        return selected;
+                      }}
                     >
                       <MenuItem value="" disabled>
                         Choose a service...
