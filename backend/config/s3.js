@@ -1,20 +1,13 @@
 const AWS = require('aws-sdk');
 const multer = require('multer');
-const multerS3 = require('multer-s3');
 const path = require('path');
-
-// Debug: Log environment variables (safely)
-console.log('🔍 Environment Variables Check:');
-console.log('AWS_ACCESS_KEY_ID:', process.env.AWS_ACCESS_KEY_ID ? '✅ Set' : '❌ Missing');
-console.log('AWS_SECRET_ACCESS_KEY:', process.env.AWS_SECRET_ACCESS_KEY ? '✅ Set' : '❌ Missing');
-console.log('AWS_REGION:', process.env.AWS_REGION || 'us-east-1');
-console.log('S3_BUCKET_NAME:', process.env.S3_BUCKET_NAME || '❌ Missing');
 
 // Validate required environment variables
 const requiredEnvVars = {
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME
+  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+  AWS_REGION: process.env.AWS_REGION || 'eu-west-1'
 };
 
 // Check for missing environment variables
@@ -24,90 +17,152 @@ const missingVars = Object.entries(requiredEnvVars)
 
 if (missingVars.length > 0) {
   console.error('❌ Missing required environment variables:', missingVars.join(', '));
-  console.error('📝 Please set these environment variables in your Render dashboard:');
-  missingVars.forEach(varName => {
-    console.error(`   - ${varName}`);
-  });
-  console.error('🔗 Go to: https://dashboard.render.com → Your Service → Environment');
   process.exit(1);
 }
 
-console.log('✅ All S3 environment variables are set');
+console.log('✅ S3 Configuration loaded successfully');
 
-// Configure AWS
+// Configure AWS SDK
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION || 'us-east-1'
+  region: process.env.AWS_REGION
 });
 
-const s3 = new AWS.S3();
-
-// Test S3 connection
-s3.headBucket({ Bucket: process.env.S3_BUCKET_NAME }, (err, data) => {
-  if (err) {
-    console.error('❌ S3 bucket connection failed:', err.message);
-    if (err.code === 'NoSuchBucket') {
-      console.error('💡 Make sure your bucket name is correct and the bucket exists');
-    } else if (err.code === 'Forbidden') {
-      console.error('💡 Check your AWS credentials and bucket permissions');
+// Create S3 instance
+const s3 = new AWS.S3({
+  apiVersion: '2006-03-01',
+  region: process.env.AWS_REGION,
+  maxRetries: 3,
+  retryDelayOptions: {
+    customBackoff: function(retryCount) {
+      return Math.pow(2, retryCount) * 100;
     }
-  } else {
-    console.log('✅ S3 bucket connection successful');
   }
 });
 
-// Configure multer for S3 upload
+// Test S3 connection on startup
+const testS3Connection = async () => {
+  try {
+    await s3.headBucket({ Bucket: process.env.S3_BUCKET_NAME }).promise();
+    console.log('✅ S3 bucket connection verified');
+  } catch (error) {
+    console.error('❌ S3 connection failed:', error.code);
+    if (error.code === 'NoSuchBucket') {
+      console.error('Bucket does not exist:', process.env.S3_BUCKET_NAME);
+    } else if (error.code === 'Forbidden') {
+      console.error('Access denied - check IAM permissions');
+    }
+  }
+};
+
+// Run connection test
+testS3Connection();
+
+// Multer configuration for memory storage
 const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.S3_BUCKET_NAME,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.fieldname });
-    },
-    key: function (req, file, cb) {
-      // Generate unique filename
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const extension = path.extname(file.originalname);
-      cb(null, `forklifts/${uniqueSuffix}${extension}`);
-    },
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    acl: 'public-read' // Make uploaded files publicly readable
-  }),
-  fileFilter: function (req, file, cb) {
-    // Only allow images
-    if (file.mimetype.startsWith('image/')) {
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    // Allowed image types
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed!'), false);
+      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.'), false);
     }
   },
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 5 * 1024 * 1024, // 5MB
+    files: 1
   }
 });
 
-// Function to delete file from S3
+// Upload file to S3
+const uploadToS3 = async (file) => {
+  const timestamp = Date.now();
+  const random = Math.round(Math.random() * 1E9);
+  const extension = path.extname(file.originalname).toLowerCase();
+  const key = `forklifts/${timestamp}-${random}${extension}`;
+
+  const uploadParams = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+    ACL: 'public-read',
+    ServerSideEncryption: 'AES256',
+    Metadata: {
+      'original-name': file.originalname,
+      'upload-time': new Date().toISOString()
+    }
+  };
+
+  try {
+    console.log(`📤 Uploading ${file.originalname} to S3...`);
+    const result = await s3.upload(uploadParams).promise();
+    console.log(`✅ Upload successful: ${result.Location}`);
+    
+    return {
+      location: result.Location,
+      key: result.Key,
+      bucket: result.Bucket,
+      etag: result.ETag
+    };
+  } catch (error) {
+    console.error('❌ S3 upload failed:', error);
+    throw new Error(`S3 upload failed: ${error.message}`);
+  }
+};
+
+// Delete file from S3
 const deleteFromS3 = async (fileUrl) => {
   try {
-    // Extract key from URL
-    const url = new URL(fileUrl);
-    const key = url.pathname.substring(1); // Remove leading slash
-    
+    // Extract key from S3 URL
+    let key;
+    if (fileUrl.includes('amazonaws.com')) {
+      const url = new URL(fileUrl);
+      key = url.pathname.substring(1); // Remove leading slash
+    } else {
+      throw new Error('Invalid S3 URL format');
+    }
+
     const deleteParams = {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key
     };
-    
+
+    console.log(`🗑️ Deleting ${key} from S3...`);
     await s3.deleteObject(deleteParams).promise();
-    console.log('File deleted from S3:', key);
+    console.log(`✅ File deleted: ${key}`);
+    
+    return { success: true, key };
   } catch (error) {
-    console.error('Error deleting file from S3:', error);
+    console.error('❌ S3 delete failed:', error);
+    throw new Error(`S3 delete failed: ${error.message}`);
+  }
+};
+
+// Check if file exists in S3
+const checkFileExists = async (key) => {
+  try {
+    await s3.headObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key
+    }).promise();
+    return true;
+  } catch (error) {
+    if (error.code === 'NotFound') {
+      return false;
+    }
+    throw error;
   }
 };
 
 module.exports = {
   upload,
+  uploadToS3,
   deleteFromS3,
+  checkFileExists,
   s3
 };
