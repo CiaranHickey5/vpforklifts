@@ -14,7 +14,6 @@ import {
   CircularProgress,
   Divider,
   FormControl,
-  InputLabel,
   Select,
 } from "@mui/material";
 import {
@@ -301,28 +300,14 @@ const ContactPage = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControl fullWidth required>
-                    <InputLabel id="service-label">Service</InputLabel>
+                  <FormControl fullWidth required variant="outlined">
                     <Select
-                      labelId="service-label"
-                      id="service"
                       value={formData.service}
-                      label="Service"
                       onChange={handleInputChange("service")}
                       displayEmpty
-                      renderValue={(selected) => {
-                        if (!selected) {
-                          return (
-                            <span style={{ color: "#888" }}>
-                              Choose a service...
-                            </span>
-                          );
-                        }
-                        return selected;
-                      }}
                     >
                       <MenuItem value="" disabled>
-                        Choose a service...
+                        Choose a service
                       </MenuItem>
                       <MenuItem value="Forklift Purchase">
                         Forklift Purchase
