@@ -49,7 +49,6 @@ const ContactPage = () => {
   const BUSINESS_NAME =
     import.meta.env.VITE_BUSINESS_NAME || "Virgil Power Forklifts";
 
-  // Google Maps URLs
   const coordinatesString = `${BUSINESS_LAT},${BUSINESS_LNG}`;
   const mapEmbedUrl = GOOGLE_MAPS_API_KEY
     ? `https://www.google.com/maps/embed/v1/view?key=${GOOGLE_MAPS_API_KEY}&center=${coordinatesString}&zoom=15&maptype=roadmap`
@@ -269,7 +268,7 @@ const ContactPage = () => {
 
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
                     label="Name"
                     variant="outlined"
@@ -279,7 +278,7 @@ const ContactPage = () => {
                     onChange={handleInputChange("name")}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
                     label="Phone"
                     variant="outlined"
@@ -304,11 +303,13 @@ const ContactPage = () => {
                   <TextField
                     select
                     label="Service"
-                    InputLabelProps={{ shrink: true }}
-                    value={formData.service}
-                    onChange={handleInputChange("service")}
                     fullWidth
                     variant="outlined"
+                    value={formData.service}
+                    onChange={handleInputChange("service")}
+                    SelectProps={{
+                      displayEmpty: true,
+                    }}
                   >
                     <MenuItem value="" disabled>
                       Choose a service...
