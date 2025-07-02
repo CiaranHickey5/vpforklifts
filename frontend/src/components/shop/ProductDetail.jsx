@@ -54,11 +54,10 @@ const ProductDetail = () => {
       </Button>
 
       <Grid container spacing={6}>
-        {/* Image Section */}
+        {/* Image */}
         <Grid item xs={12} lg={6}>
           <Stack spacing={3}>
-            {/* Main Image */}
-            <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
+            <Paper elevation={2} sx={{ borderRadius: 2, overflow: "hidden" }}>
               <Box sx={{ position: "relative" }}>
                 <Box
                   component="img"
@@ -71,10 +70,10 @@ const ProductDetail = () => {
                   }}
                 />
 
-                {/* Image Badges */}
                 <Chip
                   label={selectedForklift.status}
                   color="success"
+                  size="small"
                   sx={{
                     position: "absolute",
                     top: 16,
@@ -90,51 +89,48 @@ const ProductDetail = () => {
                       position: "absolute",
                       top: 16,
                       right: 16,
-                      width: 40,
-                      height: 40,
+                      width: 36,
+                      height: 36,
+                      boxShadow: 2,
                     }}
                   >
-                    <Star sx={{ color: "white" }} />
+                    <Star sx={{ color: "white", fontSize: 20 }} />
                   </Avatar>
                 )}
               </Box>
             </Paper>
 
-            {/* Trust Indicators */}
-            <Card elevation={2} sx={{ bgcolor: "primary.50" }}>
+            {/* Trust / Reasons */}
+            <Paper elevation={1}>
               <CardContent>
                 <Typography
                   variant="h6"
-                  sx={{
-                    fontWeight: "bold",
-                    mb: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
                 >
                   <CheckCircle color="success" />
-                  Why Choose This Forklift?
+                  Why Choose This Forklift
                 </Typography>
+
+                <Divider sx={{ mb: 2 }} />
+
                 <Grid container spacing={2}>
                   {features.map((feature, index) => (
-                    <Grid item xs={6} key={index}>
+                    <Grid item xs={12} sm={6} key={index}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <Avatar
                           sx={{
-                            bgcolor: "success.main",
-                            width: 24,
-                            height: 24,
+                            bgcolor: "primary.main",
+                            width: 28,
+                            height: 28,
                           }}
                         >
                           {React.cloneElement(feature.icon, {
-                            sx: { fontSize: 14 },
+                            sx: { fontSize: 16, color: "white" },
                           })}
                         </Avatar>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: "medium" }}
-                        >
+                        <Typography variant="body2" color="text.secondary">
                           {feature.text}
                         </Typography>
                       </Stack>
@@ -142,21 +138,26 @@ const ProductDetail = () => {
                   ))}
                 </Grid>
               </CardContent>
-            </Card>
+            </Paper>
           </Stack>
         </Grid>
 
-        {/* Details Section */}
+        {/* Details */}
         <Grid item xs={12} lg={6}>
           <Stack spacing={4}>
             {/* Header */}
             <Box>
               <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                <Chip label={selectedForklift.brand} color="primary" />
+                <Chip
+                  label={selectedForklift.brand}
+                  variant="outlined"
+                  size="small"
+                />
                 <Chip
                   icon={<ElectricBolt />}
                   label={selectedForklift.type}
-                  color="secondary"
+                  color="primary"
+                  size="small"
                 />
                 <Chip
                   label={`SKU: ${selectedForklift.sku}`}
@@ -165,20 +166,13 @@ const ProductDetail = () => {
                 />
               </Stack>
 
-              <Typography variant="h3" sx={{ fontWeight: "bold", mb: 1 }}>
+              <Typography variant="h4" fontWeight="bold" gutterBottom>
                 {selectedForklift.model}
               </Typography>
             </Box>
 
             {/* Pricing */}
-            <Card
-              elevation={2}
-              sx={{
-                bgcolor: "background.paper",
-                border: 2,
-                borderColor: "primary.main",
-              }}
-            >
+            <Paper elevation={1}>
               <CardContent>
                 <Stack
                   direction="row"
@@ -187,13 +181,14 @@ const ProductDetail = () => {
                   sx={{ mb: 2 }}
                 >
                   <Typography
-                    variant="h3"
-                    sx={{ fontWeight: "bold", color: "primary.main" }}
+                    variant="h4"
+                    fontWeight="bold"
+                    color="primary.main"
                   >
                     {selectedForklift.priceFormatted}
                   </Typography>
                   <Typography
-                    variant="h5"
+                    variant="body1"
                     sx={{
                       textDecoration: "line-through",
                       color: "text.secondary",
@@ -206,60 +201,50 @@ const ProductDetail = () => {
                       selectedForklift.price * 0.2
                     ).toLocaleString()}`}
                     color="error"
-                    sx={{ fontWeight: "bold" }}
+                    size="small"
                   />
                 </Stack>
 
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  <Typography
-                    variant="h6"
-                    color="secondary.main"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    Or hire from
-                  </Typography>
-                  <Chip
-                    icon={<LocalShipping />}
-                    label={selectedForklift.hirePrice}
-                    color="secondary"
-                    sx={{ fontWeight: "bold", fontSize: "1rem" }}
-                  />
-                </Stack>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontStyle: "italic" }}
+                >
+                  Or hire from €{selectedForklift.hirePrice} / week
+                </Typography>
               </CardContent>
-            </Card>
+            </Paper>
 
             {/* Description */}
-            <Card elevation={1}>
+            <Paper elevation={1}>
               <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
                   Description
                 </Typography>
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   color="text.secondary"
                   sx={{ lineHeight: 1.6 }}
                 >
                   {selectedForklift.description}
                 </Typography>
               </CardContent>
-            </Card>
+            </Paper>
 
             {/* Features */}
-            <Card elevation={1}>
+            <Paper elevation={1}>
               <CardContent>
                 <Typography
                   variant="h6"
-                  sx={{
-                    fontWeight: "bold",
-                    mb: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
                 >
                   <Star color="warning" />
                   Key Features
                 </Typography>
+                <Divider sx={{ mb: 2 }} />
+
                 <Grid container spacing={2}>
                   {selectedForklift.features.map((feature, index) => (
                     <Grid item xs={12} sm={6} key={index}>
@@ -267,38 +252,35 @@ const ProductDetail = () => {
                         direction="row"
                         spacing={1}
                         alignItems="center"
-                        sx={{ p: 1, bgcolor: "primary.50", borderRadius: 1 }}
+                        sx={{
+                          p: 1,
+                          bgcolor: "grey.50",
+                          borderRadius: 1,
+                        }}
                       >
                         <CheckCircle color="primary" sx={{ fontSize: 20 }} />
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: "medium" }}
-                        >
-                          {feature}
-                        </Typography>
+                        <Typography variant="body2">{feature}</Typography>
                       </Stack>
                     </Grid>
                   ))}
                 </Grid>
               </CardContent>
-            </Card>
+            </Paper>
 
             {/* Specifications */}
-            <Card elevation={1}>
+            <Paper elevation={1}>
               <CardContent>
                 <Typography
                   variant="h6"
-                  sx={{
-                    fontWeight: "bold",
-                    mb: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
                 >
                   <Handyman color="primary" />
                   Specifications
                 </Typography>
+                <Divider sx={{ mb: 2 }} />
+
                 <Grid container spacing={2}>
                   {Object.entries(selectedForklift.specs || {}).map(
                     ([key, value]) => (
@@ -317,10 +299,7 @@ const ProductDetail = () => {
                           >
                             {key}
                           </Typography>
-                          <Typography
-                            variant="body1"
-                            sx={{ fontWeight: "bold" }}
-                          >
+                          <Typography variant="body2" fontWeight="bold">
                             {value}
                           </Typography>
                         </Paper>
@@ -329,10 +308,10 @@ const ProductDetail = () => {
                   )}
                 </Grid>
               </CardContent>
-            </Card>
+            </Paper>
 
-            {/* Action Buttons */}
-            <Stack spacing={3}>
+            {/* Actions */}
+            <Stack spacing={2}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <Button
@@ -341,7 +320,7 @@ const ProductDetail = () => {
                     size="large"
                     startIcon={<Email />}
                     fullWidth
-                    sx={{ py: 2 }}
+                    sx={{ py: 1.5 }}
                   >
                     Request Quote
                   </Button>
@@ -349,21 +328,21 @@ const ProductDetail = () => {
                 <Grid item xs={12} sm={6}>
                   <Button
                     href="tel:+35351293208"
-                    variant="contained"
-                    color="secondary"
+                    variant="outlined"
+                    color="primary"
                     size="large"
                     startIcon={<Phone />}
                     fullWidth
-                    sx={{ py: 2 }}
+                    sx={{ py: 1.5 }}
                   >
                     Call to Order
                   </Button>
                 </Grid>
               </Grid>
 
-              {/* Emergency Contact */}
               <Alert
-                severity="warning"
+                severity="info"
+                sx={{ mt: 2 }}
                 action={
                   <Button
                     component="a"
@@ -376,7 +355,7 @@ const ProductDetail = () => {
                   </Button>
                 }
               >
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                <Typography variant="subtitle2" fontWeight="bold">
                   Need it urgently?
                 </Typography>
                 <Typography variant="body2">
