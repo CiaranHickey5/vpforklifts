@@ -8,8 +8,6 @@ import {
   CardContent,
   TextField,
   Button,
-  Stack,
-  Avatar,
   Paper,
   Alert,
   MenuItem,
@@ -22,14 +20,8 @@ import {
   LocationOn,
   Schedule,
   Send,
-  MyLocation,
-  Directions,
   Navigation,
   CheckCircle,
-  Person,
-  Business,
-  Message,
-  ContactPhone,
 } from "@mui/icons-material";
 
 const ContactPage = () => {
@@ -72,7 +64,6 @@ const ContactPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     setIsSubmitting(true);
     setSubmitError("");
     setShowSuccess(false);
@@ -149,34 +140,44 @@ const ContactPage = () => {
               </Typography>
               <Divider sx={{ mb: 2 }} />
 
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Phone color="primary" />
-                  <Typography variant="body1">+353 51 293 208</Typography>
-                </Stack>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Phone color="secondary" />
-                  <Typography variant="body1">
-                    +353 87 250 1934 (24/7)
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Phone color="primary" /> +353 51 293 208
                   </Typography>
-                </Stack>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Email color="primary" />
-                  <Typography variant="body1">
-                    sales@virgilpowerforklifts.com
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Phone color="secondary" /> +353 87 250 1934 (24/7)
                   </Typography>
-                </Stack>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <LocationOn color="secondary" />
-                  <Typography variant="body1">{BUSINESS_ADDRESS}</Typography>
-                </Stack>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Schedule color="action" />
-                  <Typography variant="body2">
-                    Mon-Fri: 8AM-6PM (24/7 emergency support)
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Email color="primary" /> sales@virgilpowerforklifts.com
                   </Typography>
-                </Stack>
-              </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <LocationOn color="secondary" /> {BUSINESS_ADDRESS}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <Schedule color="action" /> Mon-Fri: 8AM-6PM (24/7 emergency
+                    support)
+                  </Typography>
+                </Grid>
+              </Grid>
             </Paper>
           </Grid>
 
@@ -270,7 +271,7 @@ const ContactPage = () => {
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    label="Your Name"
+                    label="Name"
                     variant="outlined"
                     fullWidth
                     required
@@ -280,7 +281,7 @@ const ContactPage = () => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    label="Phone Number"
+                    label="Phone"
                     variant="outlined"
                     fullWidth
                     required
@@ -290,7 +291,7 @@ const ContactPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    label="Email Address"
+                    label="Email"
                     type="email"
                     variant="outlined"
                     fullWidth
@@ -302,14 +303,15 @@ const ContactPage = () => {
                 <Grid item xs={12}>
                   <TextField
                     select
-                    label="Service Needed"
+                    label="Service"
+                    InputLabelProps={{ shrink: true }}
                     value={formData.service}
                     onChange={handleInputChange("service")}
                     fullWidth
                     variant="outlined"
                   >
                     <MenuItem value="" disabled>
-                      Choose a service option...
+                      Choose a service...
                     </MenuItem>
                     <MenuItem value="Forklift Purchase">
                       Forklift Purchase
