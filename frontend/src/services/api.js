@@ -3,7 +3,7 @@ import axios from "axios";
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: "https://virgil-power-forklifts-api.onrender.com/api", // Always use production API
-  timeout: 10000,
+  timeout: 30000, // Increased timeout for file uploads
   headers: {
     "Content-Type": "application/json",
   },
@@ -179,6 +179,140 @@ export const forkliftAPI = {
   },
 };
 
+// Upload API methods - Updated for S3
+export const uploadAPI = {
+  // Upload image file to S3
+  uploadImage: async (file) => {
+    // Validate file before upload
+    if (!file) {
+      throw new Error("No file provided");
+    }
+
+    // Check file type
+    if (!file.type.startsWith("image/")) {
+      throw new Error("File must be an image");
+    }
+
+    // Check file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error("Image size must be less than 5MB");
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await api.post("/upload/image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        timeout: 60000, // 1 minute timeout for uploads
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          // You can emit custom events here for progress tracking
+          window.dispatchEvent(
+            new CustomEvent("upload:progress", {
+              detail: { percent: percentCompleted },
+            })
+          );
+        },
+      });
+
+      // Validate response
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Upload failed");
+      }
+
+      // Ensure we have the image URL
+      if (!response.data.data?.imageUrl) {
+        throw new Error("Invalid response: missing image URL");
+      }
+
+      return response.data;
+    } catch (error) {
+      // Enhanced error handling
+      if (error.response) {
+        const { status, data } = error.response;
+
+        switch (status) {
+          case 400:
+            throw new Error(data.message || "Invalid file or request");
+          case 413:
+            throw new Error("File too large. Maximum size is 5MB");
+          case 415:
+            throw new Error(
+              "Unsupported file type. Please use JPG, PNG, or GIF"
+            );
+          case 429:
+            throw new Error("Too many uploads. Please try again later");
+          case 500:
+            throw new Error("Server error during upload. Please try again");
+          default:
+            throw new Error(data.message || "Upload failed");
+        }
+      } else if (error.request) {
+        throw new Error(
+          "Network error. Please check your connection and try again"
+        );
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  // Delete uploaded image from S3
+  deleteImage: async (imageUrl) => {
+    if (!imageUrl) {
+      throw new Error("Image URL is required");
+    }
+
+    try {
+      const response = await api.delete("/upload/image", {
+        data: { imageUrl },
+      });
+
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Delete failed");
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        const { status, data } = error.response;
+
+        switch (status) {
+          case 400:
+            throw new Error(data.message || "Invalid image URL");
+          case 404:
+            throw new Error("Image not found");
+          case 500:
+            throw new Error("Server error during deletion");
+          default:
+            throw new Error(data.message || "Delete failed");
+        }
+      } else if (error.request) {
+        throw new Error("Network error. Please check your connection");
+      } else {
+        throw error;
+      }
+    }
+  },
+
+  // Get upload progress (for UI components)
+  getUploadProgress: () => {
+    return new Promise((resolve) => {
+      const handleProgress = (event) => {
+        resolve(event.detail.percent);
+        window.removeEventListener("upload:progress", handleProgress);
+      };
+      window.addEventListener("upload:progress", handleProgress);
+    });
+  },
+};
+
 // Utility functions
 export const apiUtils = {
   // Set auth token (used after successful login)
@@ -223,6 +357,12 @@ export const apiUtils = {
         case 404:
           return "Resource not found.";
 
+        case 413:
+          return "File too large. Please choose a smaller file.";
+
+        case 415:
+          return "Unsupported file type. Please use JPG, PNG, or GIF.";
+
         case 429:
           return "Too many requests. Please try again later.";
 
@@ -254,18 +394,62 @@ export const apiUtils = {
     return searchParams.toString();
   },
 
-  // Upload file (if implementing file upload)
-  uploadFile: async (file, endpoint = "/upload") => {
-    const formData = new FormData();
-    formData.append("file", file);
+  // Validate image file
+  validateImageFile: (file) => {
+    const errors = [];
 
-    const response = await api.post(endpoint, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    if (!file) {
+      errors.push("No file selected");
+      return errors;
+    }
+
+    // Check file type
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      errors.push("Invalid file type. Please use JPG, PNG, GIF, or WebP");
+    }
+
+    // Check file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      errors.push("File size must be less than 5MB");
+    }
+
+    // Check minimum dimensions (optional)
+    return new Promise((resolve) => {
+      if (errors.length > 0) {
+        resolve(errors);
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        if (img.width < 100 || img.height < 100) {
+          errors.push("Image must be at least 100x100 pixels");
+        }
+        resolve(errors);
+      };
+      img.onerror = () => {
+        errors.push("Invalid image file");
+        resolve(errors);
+      };
+      img.src = URL.createObjectURL(file);
     });
+  },
 
-    return response.data;
+  // Format file size for display
+  formatFileSize: (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   },
 };
 
@@ -290,24 +474,5 @@ const initializeAuth = () => {
 // Call on module load
 initializeAuth();
 
-// Upload API methods
-export const uploadAPI = {
-  // Upload image file
-  uploadImage: async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const response = await api.post("/upload/image", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  },
-
-  // Delete uploaded image
-  deleteImage: async (filename) => {
-    const response = await api.delete(`/upload/image/${filename}`);
-    return response.data;
-  },
-};
+// Export the main api instance for direct use if needed
+export default api;
