@@ -13,6 +13,9 @@ import {
   MenuItem,
   CircularProgress,
   Divider,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import {
   Phone,
@@ -37,7 +40,6 @@ const ContactPage = () => {
   const [submitError, setSubmitError] = useState("");
   const [mapError, setMapError] = useState(false);
 
-  // Environment variables with fallbacks
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const BUSINESS_LAT =
     import.meta.env.VITE_BUSINESS_LAT || "52.150543189614794";
@@ -138,7 +140,6 @@ const ContactPage = () => {
                 Our Contact Details
               </Typography>
               <Divider sx={{ mb: 2 }} />
-
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography
@@ -300,34 +301,36 @@ const ContactPage = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    select
-                    label="Service"
-                    fullWidth
-                    variant="outlined"
-                    value={formData.service}
-                    onChange={handleInputChange("service")}
-                    SelectProps={{
-                      displayEmpty: true,
-                    }}
-                  >
-                    <MenuItem value="" disabled>
-                      Choose a service...
-                    </MenuItem>
-                    <MenuItem value="Forklift Purchase">
-                      Forklift Purchase
-                    </MenuItem>
-                    <MenuItem value="Forklift Rental/Hire">
-                      Forklift Rental/Hire
-                    </MenuItem>
-                    <MenuItem value="Service & Repair">
-                      Service & Repair
-                    </MenuItem>
-                    <MenuItem value="Parts & Accessories">
-                      Parts & Accessories
-                    </MenuItem>
-                    <MenuItem value="General Inquiry">General Inquiry</MenuItem>
-                  </TextField>
+                  <FormControl fullWidth required>
+                    <InputLabel id="service-label">Service</InputLabel>
+                    <Select
+                      labelId="service-label"
+                      id="service"
+                      value={formData.service}
+                      label="Service"
+                      onChange={handleInputChange("service")}
+                      displayEmpty
+                    >
+                      <MenuItem value="" disabled>
+                        Choose a service...
+                      </MenuItem>
+                      <MenuItem value="Forklift Purchase">
+                        Forklift Purchase
+                      </MenuItem>
+                      <MenuItem value="Forklift Rental/Hire">
+                        Forklift Rental/Hire
+                      </MenuItem>
+                      <MenuItem value="Service & Repair">
+                        Service & Repair
+                      </MenuItem>
+                      <MenuItem value="Parts & Accessories">
+                        Parts & Accessories
+                      </MenuItem>
+                      <MenuItem value="General Inquiry">
+                        General Inquiry
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
