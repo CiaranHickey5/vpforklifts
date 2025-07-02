@@ -81,7 +81,7 @@ const ContactPage = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/contact/submit`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/contact/submit`,
         {
           method: "POST",
           headers: {
