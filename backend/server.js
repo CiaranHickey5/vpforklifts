@@ -5,6 +5,7 @@ const path = require("path");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const uploadRoutes = require("./routes/upload");
+const contactRoutes = require('./routes/contact');
 const compression = require("compression");
 require("dotenv").config();
 
@@ -67,7 +68,9 @@ app.use(cors(corsOptions));
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
 app.use("/api/upload", uploadRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Request logging
 app.use(requestLogger);
