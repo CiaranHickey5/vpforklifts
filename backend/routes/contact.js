@@ -1,10 +1,17 @@
 const express = require('express');
-const { Resend } = require('resend');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Check if Resend API key is available
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+  const { Resend } = require('resend');
+  resend = new Resend(process.env.RESEND_API_KEY);
+  console.log('✅ Resend configured successfully');
+} else {
+  console.error('❌ RESEND_API_KEY not found in environment variables');
+  console.error('📝 Please add RESEND_API_KEY to your Render environment variables');
+}
 
 // Rate limiting for contact form
 const contactLimiter = rateLimit({
@@ -43,6 +50,15 @@ const sanitizeInput = (input) => {
 router.post('/submit', contactLimiter, async (req, res) => {
   try {
     console.log('📨 Contact form submission received:', req.body);
+
+    // Check if Resend is configured
+    if (!resend) {
+      console.error('❌ Resend not configured - missing API key');
+      return res.status(500).json({
+        success: false,
+        message: 'Email service is not configured. Please try calling us directly at +353 51 293 208.'
+      });
+    }
 
     const { name, phone, email, service, message } = req.body;
 
@@ -407,9 +423,13 @@ router.post('/submit', contactLimiter, async (req, res) => {
 // Health check endpoint
 router.get('/health', async (req, res) => {
   try {
-    // Test if Resend is configured
+    // Check if Resend is configured
     if (!process.env.RESEND_API_KEY) {
-      throw new Error('RESEND_API_KEY not configured');
+      return res.status(500).json({
+        success: false,
+        message: 'Contact service unhealthy - RESEND_API_KEY not configured',
+        resend: 'not configured'
+      });
     }
     
     res.json({
